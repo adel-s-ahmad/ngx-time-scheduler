@@ -1,0 +1,16 @@
+<ngx-ts
+  [items]="items"
+  [periods]="periods"
+  [sections]="sections"
+  [events]="events"
+  [showBusinessDayOnly]="false"
+  [showHeaderTitle]="false"
+[start]="startScheduler"
+  [allowDragging]="false"
+  [text]="txt"
+></ngx-ts>
+
+<h1>From</h1>
+<form>
+  <input  matInput clrControl type="datetime-local" name="from" [(ngModel)]="from" (ngModelChange)="updateCalendarStartDate($event)">
+</form>

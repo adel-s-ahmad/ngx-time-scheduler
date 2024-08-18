@@ -1,0 +1,15 @@
+.event-style{
+  background-color: #d21e1e;
+  border: 1px solid #d50707;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+}
+
+.period-3day{
+  background-color: #000000;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+}

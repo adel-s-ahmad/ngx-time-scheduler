@@ -3,154 +3,252 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "TimeScheduler": {
-      "root": "",
-      "sourceRoot": "src",
-      "projectType": "application",
-      "prefix": "app",
-      "schematics": {},
+    "test": {
+      "projectType": "library",
+      "root": "projects/test",
+      "sourceRoot": "projects/test/src",
+      "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "outputPath": "dist/demo",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
-            "scripts": [],
-            "allowedCommonJsDependencies": [
-              "moment"
-            ],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
+            "project": "projects/test/ng-package.json"
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ]
+              "tsConfig": "projects/test/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/test/tsconfig.lib.json"
             }
           },
-          "defaultConfiguration": ""
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "TimeScheduler:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "TimeScheduler:build:production"
-            }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "TimeScheduler:build"
-          }
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "styles": [
-              "src/styles.css"
-            ],
-            "scripts": [],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
+            "tsConfig": "projects/test/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
             ]
           }
         }
       }
     },
-    "TimeScheduler-e2e": {
-      "root": "e2e/",
+    "TestApp": {
       "projectType": "application",
-      "prefix": "",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "TimeScheduler:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "TimeScheduler:serve:production"
-            }
-          }
-        }
-      }
-    },
-    "NgxTimeScheduler": {
-      "root": "projects/ngx-time-scheduler",
-      "sourceRoot": "projects/ngx-time-scheduler/src",
-      "projectType": "library",
-      "prefix": "ngx-ts",
+      "schematics": {},
+      "root": "projects/test-app",
+      "sourceRoot": "projects/test-app/src",
+      "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "tsConfig": "projects/ngx-time-scheduler/tsconfig.lib.json",
-            "project": "projects/ngx-time-scheduler/ng-package.json"
+            "outputPath": "dist/test-app",
+            "index": "projects/test-app/src/index.html",
+            "browser": "projects/test-app/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/test-app/tsconfig.app.json",
+            "assets": [
+              "projects/test-app/src/favicon.ico",
+              "projects/test-app/src/assets"
+            ],
+            "styles": [
+              "projects/test-app/src/styles.css"
+            ],
+            "scripts": [],
+            "server": "projects/test-app/src/main.server.ts",
+            "prerender": true,
+            "ssr": {
+              "entry": "projects/test-app/server.ts"
+            }
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/ngx-time-scheduler/tsconfig.lib.prod.json"
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "TestApp:build:production"
+            },
+            "development": {
+              "buildTarget": "TestApp:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "TestApp:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/ngx-time-scheduler/src/test.ts",
-            "tsConfig": "projects/ngx-time-scheduler/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-time-scheduler/karma.conf.js"
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/test-app/tsconfig.spec.json",
+            "assets": [
+              "projects/test-app/src/favicon.ico",
+              "projects/test-app/src/assets"
+            ],
+            "styles": [
+              "projects/test-app/src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "TestApp2": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/test-app2",
+      "sourceRoot": "projects/test-app2/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/test-app2",
+            "index": "projects/test-app2/src/index.html",
+            "browser": "projects/test-app2/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/test-app2/tsconfig.app.json",
+            "assets": [
+              "projects/test-app2/src/favicon.ico",
+              "projects/test-app2/src/assets"
+            ],
+            "styles": [
+              "projects/test-app2/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "TestApp2:build:production"
+            },
+            "development": {
+              "buildTarget": "TestApp2:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "TestApp2:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/test-app2/tsconfig.spec.json",
+            "assets": [
+              "projects/test-app2/src/favicon.ico",
+              "projects/test-app2/src/assets"
+            ],
+            "styles": [
+              "projects/test-app2/src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "ngx-scheduler": {
+      "projectType": "library",
+      "root": "projects/ngx-scheduler",
+      "sourceRoot": "projects/ngx-scheduler/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-scheduler/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-scheduler/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-scheduler/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ngx-scheduler/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
           }
         }
       }
     }
-  },
-  "cli": {
-    "analytics": false
   }
 }
