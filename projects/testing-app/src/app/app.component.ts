@@ -54,39 +54,39 @@ export class AppComponent {
 
     this.sections = [{
       name: 'A',
-      id: 1
+      id: '1'
     }, {
       name: 'B',
-      id: 2
+      id: '2'
     }, {
       name: 'C',
-      id: 3
+      id: '3'
     }, {
       name: 'D',
-      id: 4
+      id: '4'
     }, {
       name: 'E',
-      id: 5
+      id: '5'
     }];
 
 
     this.items = [{
       id: 1,
-      sectionID: 1,
+      sectionID: '1',
       name: 'Item 1',
       start: moment().startOf('day'),
       end: moment().add(1, 'days').endOf('day'),
       classes: 'attendee-scheduler-session-style'
     }, {
       id: 2,
-      sectionID: 3,
+      sectionID: '3',
       name: 'Item 2',
       start: moment().startOf('day'),
       end: moment().add(1, 'days').endOf('day'),
       classes: 'room-scheduler-session-style'
     }, {
       id: 3,
-      sectionID: 1,
+      sectionID: '1',
       name: 'Item 3',
       start: moment().add(1, 'days').startOf('day'),
       end: moment().add(1, 'days').endOf('day'),
@@ -98,7 +98,7 @@ export class AppComponent {
   addItem() {
     this.service.itemPush({
       id: 4,
-      sectionID: 6,
+      sectionID: '6',
       name: 'Item 4',
       start: moment().startOf('day'),
       end: moment().add(3, 'days').endOf('day'),
@@ -108,7 +108,7 @@ export class AppComponent {
 
   addSection() {
     this.service.sectionPush({
-      id: 6,
+      id: '6',
       name: 'F'
     });
   }
