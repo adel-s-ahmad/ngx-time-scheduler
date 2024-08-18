@@ -125,21 +125,21 @@ export class AppComponent implements OnInit {
 
     this.items = [{
       id: 1,
-      sectionID: 1,
+      sectionID: '1',
       name: 'Item 1',
       start: moment().startOf('day'),
       end: moment().add(5, 'days').endOf('day'),
       classes: ''
     }, {
       id: 2,
-      sectionID: 3,
+      sectionID: '3',
       name: 'Item 2',
       start: moment().startOf('day'),
       end: moment().add(4, 'days').endOf('day'),
       classes: ''
     }, {
       id: 3,
-      sectionID: 1,
+      sectionID: '1',
       name: 'Item 3',
       start: moment().add(1, 'days').startOf('day'),
       end: moment().add(3, 'days').endOf('day'),
@@ -151,7 +151,7 @@ export class AppComponent implements OnInit {
   addItem() {
     this.service.itemPush({
       id: 4,
-      sectionID: 5,
+      sectionID: '5',
       name: 'Item 4',
       start: moment().startOf('day'),
       end: moment().add(3, 'days').endOf('day'),
@@ -200,15 +200,16 @@ user's system setting. Feel free to provide suggestions.
 
 Object with properties which create periods that can be used to traverse the calendar.
 
-| Name          | Parameter        | Return Type | Description                                                       |
-|---------------|------------------|-------------|-------------------------------------------------------------------|
-| itemPush      | item: Item       | `void`      | Push the new item object into the existing one.                   |
-| itemPop       | `None`           | `void`      | Pop the last item from the existing one.                          |
-| itemRemove    | id: number       | `void`      | Remove the item with defined item id from the existing one.       |
-| sectionPush   | section: Section | `void`      | Push the new section object into the existing one.                |
-| sectionPop    | `None`           | `void`      | Pop the last section from the existing one.                       |
-| sectionRemove | id: number       | `void`      | Remove the section with defined section id from the existing one. |
-| refresh       | `None`           | `void`      | Refresh the scheduler view.                                       |
+| Name          | Parameter           | Return Type | Description                                                       |
+|---------------|---------------------|-------------|-------------------------------------------------------------------|
+| itemPush      | item: Item          | `void`      | Push the new item object into the existing one.                   |
+| itemPop       | `None`              | `void`      | Pop the last item from the existing one.                          |
+| itemRemove    | id: number          | `void`      | Remove the item with defined item id from the existing one.       |
+| sectionPush   | section: Section    | `void`      | Push the new section object into the existing one.                |
+| sectionPop    | `None`              | `void`      | Pop the last section from the existing one.                       |
+| sectionRemove | id: number          | `void`      | Remove the section with defined section id from the existing one. |
+| refresh       | `None`              | `void`      | Refresh the scheduler view.                                       |
+| updatePeriod  | start: moment.Moment| `void`      | A Moment object denoting where this object starts.                |
 
 # Models
 
@@ -247,7 +248,7 @@ Items used to fill the scheduler.
 | start     | any    | Yes      | `null`  | A Moment object denoting where this object starts.                                                                |
 | end       | any    | Yes      | `null`  | A Moment object denoting where this object ends.                                                                  |
 | classes   | string | Yes      | `null`  | Any css classes you wish to add to this item.                                                                     |
-| sectionID | number | Yes      | `null`  | The ID of the section that this item belongs to.                                                                  |
+| sectionID | string | Yes      | `null`  | The ID of the section that this item belongs to.                                                                  |
 | tooltip   | string | No       | `null`  | It is use to display tooltip for the section.                                                                     |
 
 #### Text
