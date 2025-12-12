@@ -143,12 +143,30 @@
                    [style.height]="getEventStyle(itemMeta, sectionItem.minRowHeight).height"
                    [style.top]="getEventStyle(itemMeta, sectionItem.minRowHeight).top"
                    [style.left]="getEventStyle(itemMeta, sectionItem.minRowHeight).left"
-                   [style.width]="getEventStyle(itemMeta, sectionItem.minRowHeight).width"
-                   [title]="(itemMeta.item.name || '') + (itemMeta.item.tooltip ? ' - ' + itemMeta.item.tooltip : '')">
+                   [style.width]="getEventStyle(itemMeta, sectionItem.minRowHeight).width">
                 <div class="event-content">
                   <div class="event-title">{{itemMeta.item.name}}</div>
                   <div class="event-time" *ngIf="itemMeta.isStart">
                     {{itemMeta.item.start.format('HH:mm')}}
+                  </div>
+                </div>
+                <!-- Tooltip on hover -->
+                <div class="event-tooltip">
+                  <div class="tooltip-row">
+                    <span class="tooltip-label">Title:</span>
+                    <span class="tooltip-value">{{itemMeta.item.name}}</span>
+                  </div>
+                  <div class="tooltip-row">
+                    <span class="tooltip-label">Time:</span>
+                    <span class="tooltip-value">{{itemMeta.item.start.format('MMM D, HH:mm')}} - {{itemMeta.item.end.format(itemMeta.item.start.format('YYYY-MM-DD') !== itemMeta.item.end.format('YYYY-MM-DD') ? 'MMM D, HH:mm' : 'HH:mm')}}</span>
+                  </div>
+                  <div class="tooltip-row">
+                    <span class="tooltip-label">Status:</span>
+                    <span class="tooltip-value">{{getStatusLabel(itemMeta.item.status)}}</span>
+                  </div>
+                  <div class="tooltip-row" *ngIf="itemMeta.item.organizer">
+                    <span class="tooltip-label">Organizer:</span>
+                    <span class="tooltip-value">{{itemMeta.item.organizer}}</span>
                   </div>
                 </div>
               </div>

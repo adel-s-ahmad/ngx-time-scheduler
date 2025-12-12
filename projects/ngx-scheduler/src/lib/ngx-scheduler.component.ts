@@ -117,25 +117,37 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   syncSchedulerScroll(event: Event): void {
     if (this.isScrolling) return;
     this.isScrolling = true;
-    
+
     const attendeeElement = event.target as HTMLElement;
     if (this.schedulerContentElement) {
       this.schedulerContentElement.nativeElement.scrollTop = attendeeElement.scrollTop;
     }
-    
+
     setTimeout(() => this.isScrolling = false, 10);
   }
 
   syncAttendeeScroll(event: Event): void {
     if (this.isScrolling) return;
     this.isScrolling = true;
-    
+
     const schedulerElement = event.target as HTMLElement;
     if (this.attendeeRowsElement) {
       this.attendeeRowsElement.nativeElement.scrollTop = schedulerElement.scrollTop;
     }
-    
+
     setTimeout(() => this.isScrolling = false, 10);
+  }
+
+  getStatusLabel(status?: string): string {
+    switch(status) {
+      case 'busy': return 'Busy';
+      case 'free': return 'Free';
+      case 'tentative': return 'Tentative';
+      case 'out-of-office': return 'Out of Office';
+      case 'working-elsewhere': return 'Working Elsewhere';
+      case 'unknown': return 'Unknown';
+      default: return 'Busy';
+    }
   }
 
   getTotalTimeSlots(): number {
