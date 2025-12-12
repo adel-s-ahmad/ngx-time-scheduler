@@ -40,40 +40,37 @@
 
   <!-- Main scheduler container -->
   <div class="outlook-scheduler-container">
-    <!-- Left sidebar with attendees/sections -->
-    <div class="attendees-panel">
-      <div class="attendees-header">
-        {{text.SectionTitle}}
-      </div>
-      <div class="attendees-list">
-        <div class="attendee-item"
-             *ngFor="let sectionItem of sectionItems; trackBy: trackByFn"
-             [ngClass]="{'attendee-active': sectionItem.section.isVisible !== false}"
-             (click)="toggleSectionVisibility(sectionItem.section)">
-          <div class="attendee-checkbox">
-            <input type="checkbox"
-                   [checked]="sectionItem.section.isVisible !== false"
-                   (change)="toggleSectionVisibility(sectionItem.section)">
-          </div>
-          <div class="attendee-info">
-            <div class="attendee-name">{{sectionItem.section.name}}</div>
-            <div class="attendee-email" *ngIf="sectionItem.section.email">{{sectionItem.section.email}}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main time grid -->
+    <!-- Unified scheduler grid with attendees as rows -->
     <div class="scheduler-grid-wrapper">
-      <!-- Fixed left column for spacer -->
+      <!-- Fixed left column for headers and attendees -->
       <div class="fixed-left-column">
+        <!-- Header spacers -->
         <div class="time-header-spacer" *ngFor="let headerRow of header; trackBy: trackByFn; let rowIndex = index"
              [ngClass]="{'header-row-date': rowIndex === 0, 'header-row-time': rowIndex === header.length - 1}">
+        </div>
+        <!-- Attendee names -->
+        <div class="attendee-rows-container" #attendeeRows (scroll)="syncSchedulerScroll($event)">
+          <div class="attendee-row"
+               *ngFor="let sectionItem of sectionItems; trackBy: trackByFn"
+               [style.display]="(sectionItem.section.isVisible !== false) ? 'flex' : 'none'"
+               [style.height]="sectionItem.minRowHeight + 'px'"
+               (click)="toggleSectionVisibility(sectionItem.section)">
+            <div class="attendee-checkbox">
+              <input type="checkbox"
+                     [checked]="sectionItem.section.isVisible !== false"
+                     (change)="toggleSectionVisibility(sectionItem.section)"
+                     (click)="$event.stopPropagation()">
+            </div>
+            <div class="attendee-info">
+              <div class="attendee-name">{{sectionItem.section.name}}</div>
+              <div class="attendee-email" *ngIf="sectionItem.section.email">{{sectionItem.section.email}}</div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Scrollable right column for headers and content -->
-      <div class="scrollable-right-column">
+      <div class="scrollable-right-column" #schedulerContent (scroll)="syncAttendeeScroll($event)">
         <!-- Time header rows -->
         <div class="time-header-wrapper" [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
           <div class="time-header-row" *ngFor="let headerRow of header; trackBy: trackByFn; let rowIndex = index"

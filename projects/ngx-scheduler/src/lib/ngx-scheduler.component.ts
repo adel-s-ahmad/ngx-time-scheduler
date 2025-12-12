@@ -29,6 +29,11 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
     this.changeDetector.detectChanges();
   }
 
+  @ViewChild('attendeeRows') attendeeRowsElement: ElementRef | undefined;
+  @ViewChild('schedulerContent') schedulerContentElement: ElementRef | undefined;
+
+  private isScrolling = false;
+
   @Input() currentTimeFormat = 'DD-MMM-YYYY HH:mm';
   @Input() showCurrentTime = true;
   @Input() showHeaderTitle = true;
@@ -97,6 +102,30 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
 
   trackByFn(index, item) {
     return index;
+  }
+
+  syncSchedulerScroll(event: Event): void {
+    if (this.isScrolling) return;
+    this.isScrolling = true;
+    
+    const attendeeElement = event.target as HTMLElement;
+    if (this.schedulerContentElement) {
+      this.schedulerContentElement.nativeElement.scrollTop = attendeeElement.scrollTop;
+    }
+    
+    setTimeout(() => this.isScrolling = false, 10);
+  }
+
+  syncAttendeeScroll(event: Event): void {
+    if (this.isScrolling) return;
+    this.isScrolling = true;
+    
+    const schedulerElement = event.target as HTMLElement;
+    if (this.attendeeRowsElement) {
+      this.attendeeRowsElement.nativeElement.scrollTop = schedulerElement.scrollTop;
+    }
+    
+    setTimeout(() => this.isScrolling = false, 10);
   }
 
   getTotalTimeSlots(): number {
