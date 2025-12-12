@@ -79,20 +79,50 @@
           <div class="time-header-row" *ngFor="let headerRow of header; trackBy: trackByFn; let rowIndex = index"
                [ngClass]="{'header-row-date': rowIndex === 0, 'header-row-time': rowIndex === header.length - 1}"
                [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
-            <div class="time-slot-header"
-                 *ngFor="let dateTime of headerRow.headerDetails; trackBy: trackByFn"
-                 [attr.data-colspan]="dateTime.colspan"
-                 [style.flex-grow]="dateTime.colspan"
-                 [style.flex-shrink]="0"
-                 [style.flex-basis]="(dateTime.colspan * 60) + 'px'"
-                 [title]="dateTime.tooltip? dateTime.tooltip : ''">
-              {{dateTime.name}}
-            </div>
+            <ng-container *ngIf="rowIndex === 0">
+              <!-- Date row - each header is a day boundary -->
+              <div class="time-slot-header day-boundary-header"
+                   *ngFor="let dateTime of headerRow.headerDetails; trackBy: trackByFn"
+                   [attr.data-colspan]="dateTime.colspan"
+                   [style.flex-grow]="dateTime.colspan"
+                   [style.flex-shrink]="0"
+                   [style.flex-basis]="(dateTime.colspan * 60) + 'px'"
+                   [title]="dateTime.tooltip? dateTime.tooltip : ''">
+                {{dateTime.name}}
+              </div>
+            </ng-container>
+            <ng-container *ngIf="rowIndex !== 0">
+              <!-- Time row - mark every 24th slot as day boundary -->
+              <div class="time-slot-header"
+                   *ngFor="let dateTime of headerRow.headerDetails; trackBy: trackByFn; let i = index"
+                   [ngClass]="{'day-boundary-header': (i + 1) % 24 === 0}"
+                   [attr.data-colspan]="dateTime.colspan"
+                   [style.flex-grow]="dateTime.colspan"
+                   [style.flex-shrink]="0"
+                   [style.flex-basis]="(dateTime.colspan * 60) + 'px'"
+                   [title]="dateTime.tooltip? dateTime.tooltip : ''">
+                {{dateTime.name}}
+              </div>
+            </ng-container>
           </div>
         </div>
 
         <!-- Time slots and events -->
         <div class="time-slots-content">
+          <!-- Vertical separators for hours and days -->
+          <div class="time-separators" [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
+            <!-- Hour separators -->
+            <div class="hour-separator"
+                 *ngFor="let slot of [].constructor(getTotalTimeSlots()); let i = index"
+                 [style.left]="(i * 60 - 1) + 'px'">
+            </div>
+            <!-- Day separators -->
+            <div class="day-separator"
+                 *ngFor="let day of [].constructor(Math.ceil(getTotalTimeSlots() / 24)); let i = index"
+                 [style.left]="(i * 1440 - 2) + 'px'">
+            </div>
+          </div>
+
           <!-- Selection overlay spanning all visible attendees -->
           <div class="time-selection-overlay-wrapper" *ngIf="getSelectionStyle()">
             <div class="time-selection-overlay"

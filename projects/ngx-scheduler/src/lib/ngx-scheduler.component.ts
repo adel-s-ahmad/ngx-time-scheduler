@@ -63,6 +63,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
   header: Header[];
   sectionItems: SectionItem[];
   subscription = new Subscription();
+  Math = Math;
 
   constructor(
     private changeDetector: ChangeDetectorRef,
