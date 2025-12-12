@@ -48,6 +48,8 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
   @Input() periods: Period[];
   @Input() events: Events = new Events();
   @Input() start = moment().startOf('day');
+  @Input() selectedFromTime: moment.Moment = null;
+  @Input() selectedToTime: moment.Moment = null;
 
   end = moment().endOf('day');
   showGotoModal = false;
@@ -82,6 +84,11 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
     this.updatePeriod();
   }
 
+  toggleSectionVisibility(section: Section): void {
+    section.isVisible = section.isVisible !== false ? false : true;
+    this.refreshView();
+  }
+
   refreshView() {
     this.setSectionsInSectionItems();
     this.changePeriod(this.currentPeriod, false);
@@ -89,6 +96,88 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
 
   trackByFn(index, item) {
     return index;
+  }
+
+  getTotalTimeSlots(): number {
+    // Return the number of time slots in the last header row (time slots row)
+    // Each header detail has a colspan that represents how many slots it spans
+    if (!this.header || this.header.length === 0) {
+      return 1;
+    }
+
+    const lastHeaderRow = this.header[this.header.length - 1];
+    const totalSlots = lastHeaderRow.headerDetails.reduce((sum, detail) => sum + (detail.colspan || 1), 0);
+    return totalSlots;
+  }
+
+  getSelectionStyle() {
+    if (!this.selectedFromTime || !this.selectedToTime) {
+      return null;
+    }
+
+    // Convert to moment objects if needed
+    let fromMoment: Moment;
+    let toMoment: Moment;
+
+    // If it's already a moment object, use it directly
+    if (this.selectedFromTime && 'isSame' in this.selectedFromTime) {
+      fromMoment = this.selectedFromTime as Moment;
+    } else {
+      // Otherwise treat as Date and convert
+      fromMoment = moment_(this.selectedFromTime);
+    }
+
+    if (this.selectedToTime && 'isSame' in this.selectedToTime) {
+      toMoment = this.selectedToTime as Moment;
+    } else {
+      toMoment = moment_(this.selectedToTime);
+    }
+
+    // Check if selection is within current view
+    if (fromMoment.isAfter(this.end) || toMoment.isBefore(this.start)) {
+      return null;
+    }
+
+    // Calculate position using pixel-based approach matching the header's 60px per slot
+    // Total width = getTotalTimeSlots() * 60px
+    const slotWidthPixels = 60;
+    const totalSlots = this.getTotalTimeSlots();
+
+    // Calculate left position in pixels
+    const minutesFromStart = Math.abs(this.start.diff(fromMoment, 'minutes'));
+    const minutesPerSlot = this.currentPeriodMinuteDiff / totalSlots;
+    const leftPixels = (minutesFromStart / minutesPerSlot) * slotWidthPixels;
+
+    // Calculate width in pixels
+    const durationMinutes = Math.abs(fromMoment.diff(toMoment, 'minutes'));
+    const widthPixels = (durationMinutes / minutesPerSlot) * slotWidthPixels;
+
+    return {
+      left: leftPixels + 'px',
+      width: widthPixels + 'px'
+    };
+  }
+
+  getEventStyle(itemMeta: ItemMeta, rowHeight: number) {
+    // Calculate position using pixel-based approach matching the header's 60px per slot
+    const slotWidthPixels = 60;
+    const totalSlots = this.getTotalTimeSlots();
+    const minutesPerSlot = this.currentPeriodMinuteDiff / totalSlots;
+
+    // Calculate left position in pixels
+    const leftMinuteDiff = itemMeta.item.start.diff(this.start, 'minutes');
+    const leftPixels = (leftMinuteDiff / minutesPerSlot) * slotWidthPixels;
+
+    // Calculate width in pixels
+    const durationMinutes = Math.abs(itemMeta.item.start.diff(itemMeta.item.end, 'minutes'));
+    const widthPixels = (durationMinutes / minutesPerSlot) * slotWidthPixels;
+
+    return {
+      left: leftPixels + 'px',
+      width: widthPixels + 'px',
+      height: 'calc(100% - 8px)',
+      top: '4px'
+    };
   }
 
   setSectionsInSectionItems() {
@@ -193,7 +282,9 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
   changePeriod(period: Period, userTrigger: boolean = true) {
     this.currentPeriod = period;
     const _start = this.start;
-    this.end = moment(_start).add(this.currentPeriod.timeFrameOverall, 'minutes').endOf('day');
+    // Calculate end without endOf('day') to avoid including an extra day
+    // For 3-day (4320 min) period starting Dec 11 00:00, end should be Dec 14 00:00, not Dec 14 23:59
+    this.end = moment(_start).add(this.currentPeriod.timeFrameOverall, 'minutes');
     this.currentPeriodMinuteDiff = Math.abs(this.start.diff(this.end, 'minutes'));
 
     if (userTrigger && this.events.PeriodChange) {
@@ -259,7 +350,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
     let prev: string;
     let colspan = 0;
 
-    while (now.isBefore(this.end) || now.isSame(this.end)) {
+    while (now.isBefore(this.end)) {
       if (!this.showBusinessDayOnly || (now.day() !== 0 && now.day() !== 6)) {
         const headerDetails = new HeaderDetails();
         headerDetails.name = now.locale(this.locale).format(format);

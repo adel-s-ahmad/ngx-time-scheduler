@@ -1,16 +1,56 @@
-<ngx-ts
-  [items]="items"
-  [periods]="periods"
-  [sections]="sections"
-  [events]="events"
-  [showBusinessDayOnly]="false"
-  [showHeaderTitle]="false"
-[start]="startScheduler"
-  [allowDragging]="false"
-  [text]="txt"
-></ngx-ts>
+<div class="app-container">
+  <div class="app-header">
+    <h1>Outlook Scheduling Assistant</h1>
+    <div class="app-controls">
+      <div class="time-range-selector">
+        <label for="fromTime">From:</label>
+        <input id="fromTime" type="datetime-local" [value]="selectedFromTime | date:'yyyy-MM-ddTHH:mm'" (change)="onFromTimeChange($event.target?.value)">
 
-<h1>From</h1>
-<form>
-  <input  matInput clrControl type="datetime-local" name="from" [(ngModel)]="from" (ngModelChange)="updateCalendarStartDate($event)">
-</form>
+        <label for="toTime">To:</label>
+        <input id="toTime" type="datetime-local" [value]="selectedToTime | date:'yyyy-MM-ddTHH:mm'" (change)="onToTimeChange($event.target?.value)">
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-action" (click)="addItem()">+ Add Event</button>
+        <button class="btn-action" (click)="addSection()">+ Add Attendee</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="scheduler-container">
+    <ngx-ts
+      [items]="items"
+      [periods]="periods"
+      [sections]="sections"
+      [events]="events"
+      [showBusinessDayOnly]="false"
+      [showHeaderTitle]="true"
+      [start]="startScheduler"
+      [allowDragging]="false"
+      [text]="txt"
+      [selectedFromTime]="selectedFromTimeMoment"
+      [selectedToTime]="selectedToTimeMoment"
+    ></ngx-ts>
+  </div>
+
+  <div class="app-footer">
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color status-busy"></div>
+        <span>Busy</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color status-free"></div>
+        <span>Free</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color status-tentative"></div>
+        <span>Tentative</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color status-out-of-office"></div>
+        <span>Out of Office</span>
+      </div>
+    </div>
+  </div>
+</div>

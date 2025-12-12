@@ -1,5 +1,14 @@
 import * as moment from 'moment';
 
+export enum AvailabilityStatus {
+  FREE = 'free',
+  BUSY = 'busy',
+  TENTATIVE = 'tentative',
+  OUT_OF_OFFICE = 'out-of-office',
+  WORKING_ELSEWHERE = 'working-elsewhere',
+  UNKNOWN = 'unknown'
+}
+
 export class Period {
   name: string;
   classes: string;
@@ -19,12 +28,18 @@ export class Item {
   sectionID: string;
   tooltip?: string;
   metadata?: any;
+  status?: AvailabilityStatus;
+  organizer?: string;
+  attendeeResponse?: string;
 }
 
 export class Section {
   id: string;
   name: string;
   tooltip?: string;
+  email?: string;
+  isVisible?: boolean;
+  type?: 'attendee' | 'room'; // attendee or room resource
 }
 
 export class Text {
