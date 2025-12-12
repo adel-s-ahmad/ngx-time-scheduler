@@ -134,7 +134,9 @@
           <div class="time-slot-row"
                *ngFor="let sectionItem of sectionItems; trackBy: trackByFn"
                [style.display]="(sectionItem.section.isVisible !== false) ? 'flex' : 'none'">
-            <div class="time-slots" [style.height]="sectionItem.minRowHeight + 'px'">
+            <div class="time-slots"
+                 [style.height]="sectionItem.minRowHeight + 'px'"
+                 [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
               <!-- Events for this section -->
               <div class="calendar-event"
                    *ngFor="let itemMeta of sectionItem.itemMetas; trackBy: trackByFn"
