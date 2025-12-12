@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 
 import {
@@ -23,7 +23,7 @@ const moment = moment_;
   templateUrl: './ngx-scheduler.component.html',
   styleUrls: ['./ngx-scheduler.component.css']
 })
-export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
+export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('sectionTd') set SectionTd(elementRef: ElementRef) {
     this.SectionLeftMeasure = elementRef.nativeElement.clientWidth + 'px';
     this.changeDetector.detectChanges();
@@ -88,6 +88,16 @@ export class NgxTimeSchedulerComponent implements OnInit, OnDestroy {
     this.sectionRemove();
     this.refresh();
     this.updatePeriod();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // React to changes in the start input
+    if (changes['start'] && !changes['start'].firstChange) {
+      // Recalculate the period when start date changes
+      if (this.currentPeriod) {
+        this.changePeriod(this.currentPeriod, false);
+      }
+    }
   }
 
   toggleSectionVisibility(section: Section): void {

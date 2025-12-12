@@ -275,6 +275,21 @@ export class AppComponent {
           this.selectedToTimeMoment = newToTime;
         }
       }
+
+      // Navigate to selected date if it's outside the current visible period
+      // Get the currently active period (default to first period)
+      const currentPeriod = this.periods[0]; // Using first period as default
+      const periodDurationMinutes = currentPeriod.timeFrameOverall;
+      const schedulerEnd = this.startScheduler.clone().add(periodDurationMinutes, 'minutes');
+
+      // Check if selected date is outside the visible range
+      if (selectedDateTime.isBefore(this.startScheduler) || selectedDateTime.isAfter(schedulerEnd)) {
+        // Navigate to the selected date (start of day)
+        // Create a new moment instance to trigger change detection
+        this.startScheduler = moment(selectedDateTime).startOf('day');
+        this.from = this.startScheduler.toDate();
+        console.log('Navigated to:', this.startScheduler.format('YYYY-MM-DD'));
+      }
     }
   }
 
