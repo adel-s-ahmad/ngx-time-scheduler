@@ -119,7 +119,7 @@
             <!-- Day separators -->
             <div class="day-separator"
                  *ngFor="let day of [].constructor(Math.ceil(getTotalTimeSlots() / 24)); let i = index"
-                 [style.left]="(i * 1440 - 2) + 'px'">
+                 [style.left]="(i * 1440 - 12) + 'px'">
             </div>
           </div>
 

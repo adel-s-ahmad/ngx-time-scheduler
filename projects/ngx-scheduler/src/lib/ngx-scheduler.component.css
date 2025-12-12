@@ -300,7 +300,7 @@
 }
 
 .time-slot-header.day-boundary-header {
-  border-right: 2px solid #333;
+  border-right: 12px solid #d0d0d0;
 }
 
 .time-slot-header:last-child {
@@ -336,8 +336,8 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background-color: #333;
+  width: 12px;
+  background-color: #d0d0d0;
   z-index: 2;
 }
 
