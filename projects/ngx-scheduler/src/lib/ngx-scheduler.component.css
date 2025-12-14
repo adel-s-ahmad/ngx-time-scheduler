@@ -599,6 +599,16 @@
   background-color: #e0e0e0;
 }
 
+/* Hour separator differentiation by row type */
+.unified-grid-row.row-attendee .hour-separator {
+  background-color: #e0e0e0;
+}
+
+.unified-grid-row.row-group-title .hour-separator,
+.unified-grid-row.row-combobox .hour-separator {
+  background-color: transparent;
+}
+
 .day-separator {
   position: absolute;
   top: 0;

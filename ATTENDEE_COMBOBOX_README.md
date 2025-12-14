@@ -120,7 +120,7 @@ onAttendeeSelected(groupKey: string, attendee: Attendee): void {
 ```html
 <app-attendee-combobox
   [items]="getFilteredAttendees(groupKey)"
-  [placeholder]="'Add from ' + groupTitle + '...'"
+  [placeholder]=""
   (itemSelected)="onAttendeeSelected(groupKey, $event)">
 </app-attendee-combobox>
 ```

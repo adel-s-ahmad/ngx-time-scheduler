@@ -62,28 +62,31 @@ export class AppComponent {
     this.from = this.startScheduler.toDate();
 
     this.periods = [
+      // {
+      //   name: '3 days',
+      //   timeFramePeriod: 60,
+      //   timeFrameOverall: (60 * 24 * 3),
+      //   timeFrameHeaders: [
+      //     'ddd DD MMM',
+      //     'HH:mm'
+      //   ],
+      //   classes: ''
+      // },
       {
-        name: '3 days',
-        timeFramePeriod: 60,
-        timeFrameOverall: (60 * 24 * 3),
-        timeFrameHeaders: [
-          'ddd DD MMM',
-          'HH:mm'
-        ],
-        classes: ''
-      }, {
         name: '1 week',
         timeFrameHeaders: ['ddd DD', 'HH:mm'],
         classes: '',
         timeFrameOverall: 1440 * 7,
         timeFramePeriod: 60,
-      }, {
-        name: '2 weeks',
-        timeFrameHeaders: ['ddd DD', 'HH:mm'],
-        classes: '',
-        timeFrameOverall: 1440 * 14,
-        timeFramePeriod: 60,
-      }];
+      }
+      // , {
+      //   name: '2 weeks',
+      //   timeFrameHeaders: ['ddd DD', 'HH:mm'],
+      //   classes: '',
+      //   timeFrameOverall: 1440 * 14,
+      //   timeFramePeriod: 60,
+      // }
+    ];
 
     // Start with no default attendees in scheduler; add via groups
     this.sections = [];

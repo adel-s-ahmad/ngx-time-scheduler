@@ -232,7 +232,7 @@ onAttendeeSelected(groupKey: string, attendee: Attendee) { // ONE handler
   <!-- Single unified component -->
   <app-attendee-combobox
     [items]="getFilteredAttendees(grp.key)"
-    [placeholder]="'Add from ' + grp.title + '...'"
+    [placeholder]=""
     (itemSelected)="onAttendeeSelected(grp.key, $event)">
   </app-attendee-combobox>
   

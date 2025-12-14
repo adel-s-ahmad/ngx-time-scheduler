@@ -48,7 +48,7 @@
         <div class="time-header-spacer" *ngFor="let headerRow of header; trackBy: trackByFn; let rowIndex = index"
              [ngClass]="{'header-row-date': rowIndex === 0, 'header-row-time': rowIndex === header.length - 1}">
         </div>
-        
+
         <!-- Attendee names -->
         <div class="attendee-rows-container" #attendeeRows (scroll)="syncSchedulerScroll($event)">
           <!-- Inline attendee add per group (inside scrollable container) -->
@@ -57,7 +57,7 @@
               <div class="attendee-group-title">{{grp.title}}</div>
               <app-attendee-combobox
                 [items]="getFilteredAttendees(grp.key)"
-                [placeholder]="'Add from ' + grp.title + '...'"
+                [placeholder]=""
                 [asyncConfig]="getAsyncConfigForGroup(grp.key)"
                 (itemSelected)="onAttendeeSelected(grp.key, $event)">
               </app-attendee-combobox>
@@ -77,7 +77,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Legacy attendee rows (only visible when groups NOT configured) -->
           <ng-container *ngIf="!attendeeGroupConfigs || attendeeGroupConfigs.length === 0">
             <div class="attendee-row"

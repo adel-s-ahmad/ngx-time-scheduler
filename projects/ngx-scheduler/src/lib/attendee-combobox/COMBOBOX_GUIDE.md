@@ -67,7 +67,7 @@ onOptionHover(index: number): void // Updates highlighted option on hover
 ```html
 <app-attendee-combobox
   [items]="getFilteredAttendees(groupKey)"
-  [placeholder]="'Add from ' + groupTitle + '...'"
+  [placeholder]=""
   (itemSelected)="onAttendeeSelected(groupKey, $event)">
 </app-attendee-combobox>
 ```
@@ -192,7 +192,7 @@ export class NgxTimeSchedulerModule {}
 ```html
 <app-attendee-combobox
   [items]="getFilteredAttendees(groupKey)"
-  [placeholder]="'Add from ' + groupTitle + '...'"
+  [placeholder]=""
   (itemSelected)="onAttendeeSelected(groupKey, $event)">
 </app-attendee-combobox>
 ```

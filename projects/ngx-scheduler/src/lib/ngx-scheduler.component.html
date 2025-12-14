@@ -109,7 +109,7 @@
             <div class="combobox-cell" *ngIf="sectionItem.rowType === 'combobox'">
               <app-attendee-combobox
                 [items]="getFilteredAttendees(sectionItem.groupKey)"
-                [placeholder]="'Add from ' + sectionItem.groupTitle + '...'"
+                [placeholder]=""
                 [asyncConfig]="getAsyncConfigForGroup(sectionItem.groupKey)"
                 (itemSelected)="onAttendeeSelected(sectionItem.groupKey, $event)">
               </app-attendee-combobox>
@@ -142,10 +142,9 @@
                  [style.height]="sectionItem.minRowHeight + 'px'"
                  [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
 
-              <!-- Vertical separators (only on first attendee row of each group) -->
-              <div class="time-separators"
-                   *ngIf="sectionItem.rowType === 'attendee' && isFirstAttendeeInSection(sectionItem)"
-                   [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
+                  <!-- Vertical separators (show on all rows) -->
+                  <div class="time-separators"
+                    [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
                 <!-- Hour separators -->
                 <div class="hour-separator"
                      *ngFor="let slot of [].constructor(getTotalTimeSlots()); let i = index"
@@ -197,9 +196,9 @@
                 </div>
               </ng-container>
 
-              <!-- Current time indicator (only for attendee rows) -->
-              <div class="current-time-indicator"
-                   *ngIf="sectionItem.rowType === 'attendee' && showCurrentTime"
+                  <!-- Current time indicator (show on all rows) -->
+                  <div class="current-time-indicator"
+                    *ngIf="showCurrentTime"
                    [title]="currentTimeTitle"
                    [style.visibility]="currentTimeVisibility"
                    [style.left]="currentTimeIndicatorPosition">

@@ -24,7 +24,8 @@
        [sections]="sections"
        [events]="events"
        [showBusinessDayOnly]="false"
-       [showHeaderTitle]="true"
+       [showHeaderTitle]="false"
+       [showActionButtons]="false"
        [start]="startScheduler"
        [allowDragging]="false"
        [text]="txt"
@@ -38,7 +39,7 @@
   </div>
 
   <div class="app-footer">
-    <!-- <div class="legend">
+    <div class="legend">
       <div class="legend-item">
         <div class="legend-color status-busy"></div>
         <span>Busy</span>
@@ -55,6 +56,6 @@
         <div class="legend-color status-out-of-office"></div>
         <span>Out of Office</span>
       </div>
-    </div> -->
+    </div>
   </div>
 </div>
