@@ -48,8 +48,8 @@
       </div>
 
       <!-- Right column headers (time slots) - scrollable horizontally -->
-      <div class="header-right-column" #headerScroll>
-        <div class="time-header-wrapper" [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
+      <div class="header-right-column">
+        <div class="time-header-wrapper" #timeHeaderInner [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
           <div class="time-header-row" *ngFor="let headerRow of header; trackBy: trackByFn; let rowIndex = index"
                [ngClass]="{'header-row-date': rowIndex === 0, 'header-row-time': rowIndex === header.length - 1}"
                [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
@@ -205,15 +205,13 @@
               </div>
             </div>
           </div>
+        <!-- Unified selection overlay (inside rows to span full content height) -->
+        <div class="unified-selection-overlay-container"
+             *ngIf="getSelectionStyle()"
+             [style.left]="getSelectionStyle().left"
+             [style.width]="getSelectionStyle().width"
+             [style.top]="'0'">
         </div>
-      </div>
-
-      <!-- Unified selection overlay -->
-      <div class="unified-selection-overlay-container"
-           *ngIf="getSelectionStyle()"
-           [style.left]="getSelectionStyle().left"
-           [style.width]="getSelectionStyle().width"
-           [style.top]="'0'">
       </div>
     </div>
   </div>

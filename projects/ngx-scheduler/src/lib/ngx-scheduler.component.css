@@ -160,23 +160,10 @@
 
 .header-right-column {
   flex: 1;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: thin;
+  overflow: hidden; /* hide header scrollbar; body is the single scroll surface */
 }
 
-.header-right-column::-webkit-scrollbar {
-  height: 8px;
-}
-
-.header-right-column::-webkit-scrollbar-track {
-  background: #f0f0f0;
-}
-
-.header-right-column::-webkit-scrollbar-thumb {
-  background: #c0c0c0;
-  border-radius: 4px;
-}
+/* No visible scrollbar for header column */
 
 /* Body with unified scroll */
 .unified-grid-body {
@@ -204,6 +191,7 @@
 
 .unified-grid-rows {
   min-width: min-content;
+  position: relative;
 }
 
 /* Unified grid row */
@@ -873,8 +861,10 @@
   top: 0;
   bottom: 0;
   background-color: rgba(0, 120, 215, 0.15);
-  border: 2px solid #0078d7;
-  border-radius: 2px;
+  /* Smooth left/right edges via inset box-shadows (no top/bottom) */
+  border: none;
+  border-radius: 0;
+  box-shadow: inset 2px 0 0 rgba(0, 120, 215, 0.7), inset -2px 0 0 rgba(0, 120, 215, 0.7);
   z-index: 6;
   pointer-events: none;
   box-sizing: border-box;

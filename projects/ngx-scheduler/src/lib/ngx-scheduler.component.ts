@@ -41,10 +41,9 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('attendeeRows') attendeeRowsElement: ElementRef | undefined;
   @ViewChild('schedulerContent') schedulerContentElement: ElementRef | undefined;
   @ViewChild('unifiedScroll') unifiedScrollElement: ElementRef | undefined;
-  @ViewChild('headerScroll') headerScrollElement: ElementRef | undefined;
+  @ViewChild('timeHeaderInner') timeHeaderInnerElement: ElementRef | undefined;
 
   private isScrolling = false;
-  currentHorizontalScrollLeft = 0;
 
   @Input() currentTimeFormat = 'DD-MMM-YYYY HH:mm';
   @Input() showCurrentTime = true;
@@ -311,19 +310,13 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     setTimeout(() => this.isScrolling = false, 10);
   }
 
-  // Unified grid scroll handler - syncs horizontal scroll with header
+  // Unified grid scroll handler - syncs horizontal scroll with header via transform
   onUnifiedScroll(event: Event): void {
-    if (this.isScrolling) return;
-    this.isScrolling = true;
-
     const unifiedElement = event.target as HTMLElement;
-    this.currentHorizontalScrollLeft = unifiedElement.scrollLeft;
-
-    if (this.headerScrollElement) {
-      this.headerScrollElement.nativeElement.scrollLeft = unifiedElement.scrollLeft;
+    if (this.timeHeaderInnerElement) {
+      const headerInner = this.timeHeaderInnerElement.nativeElement as HTMLElement;
+      headerInner.style.transform = `translateX(${-unifiedElement.scrollLeft}px)`;
     }
-
-    setTimeout(() => this.isScrolling = false, 10);
   }
 
   // Helper to determine if this is the first attendee in a section (for separator rendering)
