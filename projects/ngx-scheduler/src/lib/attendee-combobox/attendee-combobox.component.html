@@ -30,7 +30,7 @@
   </div>
 
   <!-- Results dropdown -->
-  <div class="combobox-dropdown-portal combobox-dropdown-list" 
+  <div class="combobox-dropdown-portal combobox-dropdown-list"
        *ngIf="!isLoading && filteredItems.length > 0"
        (mousedown)="$event.preventDefault()">
     <div
@@ -47,13 +47,13 @@
   </div>
 
   <!-- No results message -->
-  <div class="combobox-dropdown-portal combobox-no-results-msg" 
+  <div class="combobox-dropdown-portal combobox-no-results-msg"
        *ngIf="!isLoading && filteredItems.length === 0 && filterText.trim()">
     No items found
   </div>
 
   <!-- Empty async state -->
-  <div class="combobox-dropdown-portal combobox-no-results-msg" 
+  <div class="combobox-dropdown-portal combobox-no-results-msg"
        *ngIf="!isLoading && filteredItems.length === 0 && !filterText.trim() && asyncConfig?.apiUrl">
     Start typing to search...
   </div>

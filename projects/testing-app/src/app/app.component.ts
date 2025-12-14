@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import moment from 'moment';
-import { Events, Item, NgxTimeSchedulerModule, NgxTimeSchedulerService, Period, Section, Text, AvailabilityStatus } from 'ngx-scheduler';
+import { Events, Item, NgxTimeSchedulerModule, NgxTimeSchedulerService, Period, Section, Text } from '@adelsoli/ngx-scheduler';
 
 @Component({
   selector: 'app-root',
@@ -13,9 +13,9 @@ import { Events, Item, NgxTimeSchedulerModule, NgxTimeSchedulerService, Period, 
 })
 export class AppComponent {
   events: Events = new Events();
-  periods: Period[];
-  sections: Section[];
-  items: Item[];
+  periods: Period[] = [];
+  sections: Section[] = [];
+  items: Item[] = [];
   txt: Text = new Text();
 
   // Inline attendee add test data
@@ -87,8 +87,89 @@ export class AppComponent {
     this.sections = [];
 
     // Sample events with different availability statuses
-    // Start with no default items; events appear after attendees are added
-    this.items = [];
+    // Create events for pre-selected attendees (Ava Parker, Sarah Johnson, Conference Room A)
+    this.items = [
+      // Ava Parker events
+      {
+        id: 1,
+        sectionID: 'c1',
+        name: 'Team Standup',
+        start: moment().startOf('day').add(9, 'hours'),
+        end: moment().startOf('day').add(9.5, 'hours'),
+        status: 'busy' as any,
+        organizer: 'Ava Parker',
+        attendeeResponse: 'accepted',
+        classes: ''
+      } as any,
+      {
+        id: 2,
+        sectionID: 'c1',
+        name: 'Client Call',
+        start: moment().startOf('day').add(14, 'hours'),
+        end: moment().startOf('day').add(15, 'hours'),
+        status: 'busy' as any,
+        organizer: 'Ava Parker',
+        attendeeResponse: 'accepted',
+        classes: ''
+      } as any,
+      // Sarah Johnson events
+      {
+        id: 3,
+        sectionID: 'u1',
+        name: 'Design Review',
+        start: moment().startOf('day').add(10, 'hours'),
+        end: moment().startOf('day').add(11, 'hours'),
+        status: 'busy' as any,
+        organizer: 'Sarah Johnson',
+        attendeeResponse: 'accepted',
+        classes: ''
+      } as any,
+      {
+        id: 4,
+        sectionID: 'u1',
+        name: 'Lunch Break',
+        start: moment().startOf('day').add(12, 'hours'),
+        end: moment().startOf('day').add(13, 'hours'),
+        status: 'busy' as any,
+        organizer: 'Sarah Johnson',
+        attendeeResponse: 'accepted',
+        classes: ''
+      } as any,
+      {
+        id: 5,
+        sectionID: 'u1',
+        name: 'Project Planning',
+        start: moment().startOf('day').add(15, 'hours'),
+        end: moment().startOf('day').add(16.5, 'hours'),
+        status: 'busy' as any,
+        organizer: 'Sarah Johnson',
+        attendeeResponse: 'tentative',
+        classes: ''
+      } as any,
+      // Conference Room A events
+      {
+        id: 6,
+        sectionID: 'r1',
+        name: 'All Hands Meeting',
+        start: moment().startOf('day').add(11, 'hours'),
+        end: moment().startOf('day').add(12, 'hours'),
+        status: 'busy' as any,
+        organizer: 'Management',
+        attendeeResponse: 'accepted',
+        classes: ''
+      } as any,
+      {
+        id: 7,
+        sectionID: 'r1',
+        name: 'Department Sync',
+        start: moment().startOf('day').add(16, 'hours'),
+        end: moment().startOf('day').add(17, 'hours'),
+        status: 'busy' as any,
+        organizer: 'Management',
+        attendeeResponse: 'accepted',
+        classes: ''
+      } as any
+    ];
 
     // Handle period changes from scheduler navigation
     this.events.PeriodChange = (start: moment.Moment) => {
@@ -102,15 +183,15 @@ export class AppComponent {
   addItem() {
     this.service.itemPush({
       id: 11,
-      sectionID: '2',
+      sectionID: 'r1',
       name: 'New Meeting',
       start: moment().startOf('day').add(16, 'hours'),
       end: moment().startOf('day').add(17, 'hours'),
-      status: AvailabilityStatus.BUSY,
+      status: 'busy' as any,
       organizer: 'Me',
       attendeeResponse: 'organizer',
       classes: ''
-    });
+    } as any);
   }
 
   addSection() {
@@ -120,7 +201,7 @@ export class AppComponent {
       email: 'james.wilson@company.com',
       type: 'attendee',
       isVisible: true
-    });
+    } as any);
   }
 
   popItem() {

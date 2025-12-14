@@ -6,12 +6,12 @@ import { AttendeeService, Attendee } from './attendee.service';
 /**
  * Test component demonstrating async attendee loading
  * Shows how to use the async attendee feature with mock API data
- * 
+ *
  * NOTE: This component requires NgxSchedulerComponent to be imported.
  * Once ngx-scheduler library is installed, uncomment the import below:
- * 
+ *
  * import { NgxTimeSchedulerModule } from 'ngx-scheduler';
- * 
+ *
  * And add to imports array:
  * imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxTimeSchedulerModule]
  */
@@ -22,14 +22,14 @@ import { AttendeeService, Attendee } from './attendee.service';
   template: `
     <div class="container">
       <h1>NGX Scheduler - Async Attendees Demo</h1>
-      
+
       <div class="demo-section">
         <h2>Async Attendee Loader Service</h2>
-        
+
         <div class="info-panel">
           <h3>Overview</h3>
           <p>
-            This component demonstrates the <strong>AttendeeService</strong> that provides 
+            This component demonstrates the <strong>AttendeeService</strong> that provides
             async loading of attendees from a mock API. The service supports:
           </p>
           <ul>

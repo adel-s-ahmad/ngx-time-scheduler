@@ -46,12 +46,12 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
   @Input() groupTitle = '';
   @Input() asyncConfig?: AsyncLoadConfig;
   @Input() closeOnSelect = true;  // Default to closing after selection
-  
+
   @Output() itemSelected = new EventEmitter<Attendee>();
-  
+
   @ViewChild('inputElement', { static: false }) inputElement?: ElementRef<HTMLInputElement>;
   @ViewChild('dropdownElement', { static: false, read: ElementRef }) dropdownElement?: ElementRef<HTMLDivElement>;
-  
+
   filterText = '';
   isOpen = false;
   filteredItems: Attendee[] = [];
@@ -65,14 +65,17 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
   private subscription?: Subscription;
   private scrollParent?: HTMLElement | null;
   private boundRepositionHandler?: () => void;
+  private document: Document;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private attendeeService: AttendeeService,
     private host: ElementRef<HTMLElement>,
     private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document
-  ) {}
+    @Inject(DOCUMENT) documentRef: Document
+  ) {
+    this.document = documentRef;
+  }
 
   ngOnInit(): void {
     // Setup debounced async search if configured
@@ -151,12 +154,12 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
 
   onInputFocus(): void {
     this.isOpen = true;
-    
+
     // If async is configured and dropdown is opening without search term, fetch all items
     if (this.asyncConfig?.apiUrl && !this.filterText.trim()) {
       this.performAsyncSearch('');
     }
-    
+
     this.needsPositioning = true;
     this.cdr.markForCheck();
   }
@@ -165,12 +168,12 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
     // Handle click event separately from focus to reopen dropdown when already focused
     if (!this.isOpen) {
       this.isOpen = true;
-      
+
       // If async is configured and no search term, fetch all items
       if (this.asyncConfig?.apiUrl && !this.filterText.trim()) {
         this.performAsyncSearch('');
       }
-      
+
       this.needsPositioning = true;
       this.cdr.markForCheck();
     }
@@ -224,10 +227,10 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
     this.filterText = '';
     this.selectedIndex = -1;
     this.updateFilteredItems();
-    
+
     // Check closeOnSelect preference (input or from asyncConfig)
     const shouldClose = this.asyncConfig?.closeOnSelect ?? this.closeOnSelect;
-    
+
     if (shouldClose) {
       // Close and blur to allow next click to re-open
       this.isOpen = false;
@@ -281,16 +284,16 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
     if (!this.isOpen || !this.inputElement || !this.dropdownElement) {
       return;
     }
-    
+
     const dropdown = this.dropdownElement.nativeElement;
     const input = this.inputElement.nativeElement;
     const rect = input.getBoundingClientRect();
-    
+
     // Move dropdown to body if not already there
     if (dropdown.parentElement !== this.document.body) {
       this.renderer.appendChild(this.document.body, dropdown);
     }
-    
+
     // Position it below the input using fixed positioning
     this.renderer.setStyle(dropdown, 'position', 'fixed');
     this.renderer.setStyle(dropdown, 'top', `${rect.bottom + 2}px`);

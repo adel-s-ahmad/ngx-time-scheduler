@@ -46,7 +46,7 @@
       <div class="header-left-column">
         <div class="attendees-header-label">{{text.SectionTitle || 'Attendees'}}</div>
       </div>
-      
+
       <!-- Right column headers (time slots) - scrollable horizontally -->
       <div class="header-right-column" #headerScroll>
         <div class="time-header-wrapper" [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
@@ -97,14 +97,14 @@
              }"
              [style.display]="(sectionItem.section.isVisible !== false) ? 'flex' : 'none'"
              [style.height]="sectionItem.minRowHeight + 'px'">
-          
+
           <!-- Left column: Fixed width for attendee info -->
           <div class="row-left-column">
             <!-- Group title row -->
             <div class="group-title-cell" *ngIf="sectionItem.rowType === 'group-title'">
               {{sectionItem.groupTitle || sectionItem.section.name}}
             </div>
-            
+
             <!-- Combobox row -->
             <div class="combobox-cell" *ngIf="sectionItem.rowType === 'combobox'">
               <app-attendee-combobox
@@ -114,14 +114,14 @@
                 (itemSelected)="onAttendeeSelected(sectionItem.groupKey, $event)">
               </app-attendee-combobox>
             </div>
-            
+
             <!-- Attendee row -->
             <div class="attendee-cell" *ngIf="sectionItem.rowType === 'attendee'">
               <div class="attendee-checkbox">
-                <button type="button" 
+                <button type="button"
                         *ngIf="sectionItem.groupKey"
-                        class="remove-attendee-btn-icon" 
-                        (click)="removeAttendeeFromGroup(sectionItem.groupKey, sectionItem.section.id)" 
+                        class="remove-attendee-btn-icon"
+                        (click)="removeAttendeeFromGroup(sectionItem.groupKey, sectionItem.section.id)"
                         title="Remove">×</button>
                 <input type="checkbox"
                        *ngIf="!sectionItem.groupKey"
@@ -135,15 +135,15 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Right column: Timeline with events -->
           <div class="row-right-column">
             <div class="time-slots"
                  [style.height]="sectionItem.minRowHeight + 'px'"
                  [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
-              
+
               <!-- Vertical separators (only on first attendee row of each group) -->
-              <div class="time-separators" 
+              <div class="time-separators"
                    *ngIf="sectionItem.rowType === 'attendee' && isFirstAttendeeInSection(sectionItem)"
                    [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
                 <!-- Hour separators -->
@@ -210,7 +210,7 @@
       </div>
 
       <!-- Unified selection overlay -->
-      <div class="unified-selection-overlay-container" 
+      <div class="unified-selection-overlay-container"
            *ngIf="getSelectionStyle()"
            [style.left]="getSelectionStyle().left"
            [style.width]="getSelectionStyle().width"

@@ -10,22 +10,22 @@ export enum AvailabilityStatus {
 }
 
 export class Period {
-  name: string;
-  classes: string;
-  timeFramePeriod: number;
-  timeFrameOverall: number;
-  timeFrameHeaders: string[];
+  name!: string;
+  classes!: string;
+  timeFramePeriod!: number;
+  timeFrameOverall!: number;
+  timeFrameHeaders!: string[];
   timeFrameHeadersTooltip?: string[];
   tooltip?: string;
 }
 
 export class Item {
-  id: number;
-  name: string;
-  start: moment.Moment;
-  end: moment.Moment;
-  classes: string;
-  sectionID: string;
+  id!: number;
+  name!: string;
+  start!: moment.Moment;
+  end!: moment.Moment;
+  classes!: string;
+  sectionID!: string;
   tooltip?: string;
   metadata?: any;
   status?: AvailabilityStatus;
@@ -55,8 +55,8 @@ export interface AttendeeGroup {
 }
 
 export class Section {
-  id: string;
-  name: string;
+  id!: string;
+  name!: string;
   tooltip?: string;
   email?: string;
   isVisible?: boolean;
@@ -67,12 +67,12 @@ export class Section {
 }
 
 export class Text {
-  NextButton: string;
-  PrevButton: string;
-  TodayButton: string;
-  GotoButton: string;
-  SectionTitle: string;
-  HeaderTitle: string;
+  NextButton!: string;
+  PrevButton!: string;
+  TodayButton!: string;
+  GotoButton!: string;
+  SectionTitle!: string;
+  HeaderTitle!: string;
 
   constructor() {
     this.NextButton = 'Next';
@@ -80,7 +80,7 @@ export class Text {
     this.TodayButton = 'Today';
     this.GotoButton = 'Go to';
     this.SectionTitle = 'Section';
-    this.HeaderTitle = null;
+    this.HeaderTitle = '';
   }
 }
 
@@ -89,17 +89,17 @@ export class Events {
   // ItemMovement: (item: Item, start: any, end: any) => void;
   // ItemMovementStart: (item: Item, start: any, end: any) => void;
   // ItemMovementEnd: (item: Item, start: any, end: any) => void;
-  ItemDropped: (item: Item) => void;
-  ItemClicked: (item: Item) => void;
-  ItemContextMenu: (item: Item, event: MouseEvent) => void;
-  SectionClickEvent: (section: Section) => void;
-  SectionContextMenuEvent: (section: Section, event: MouseEvent) => void;
-  PeriodChange: (start: moment.Moment, end: moment.Moment) => void;
+  ItemDropped!: (item: Item) => void;
+  ItemClicked!: (item: Item) => void;
+  ItemContextMenu!: (item: Item, event: MouseEvent) => void;
+  SectionClickEvent!: (section: Section) => void;
+  SectionContextMenuEvent!: (section: Section, event: MouseEvent) => void;
+  PeriodChange!: (start: moment.Moment, end: moment.Moment) => void;
 }
 
 export class SectionItem {
-  section: Section;
-  minRowHeight: number;
+  section!: Section;
+  minRowHeight!: number;
   itemMetas: ItemMeta[];
   // For unified grid layout
   rowType?: 'group-title' | 'combobox' | 'attendee';
@@ -112,9 +112,9 @@ export class SectionItem {
 }
 
 export class ItemMeta {
-  item: Item;
-  isStart: boolean;
-  isEnd: boolean;
+  item!: Item;
+  isStart!: boolean;
+  isEnd!: boolean;
   cssTop: number;
   cssLeft: number;
   cssWidth: number;
@@ -135,7 +135,7 @@ export class Header {
 }
 
 export class HeaderDetails {
-  name: string;
-  colspan: number;
+  name!: string;
+  colspan!: number;
   tooltip?: string;
 }

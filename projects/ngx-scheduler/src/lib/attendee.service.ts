@@ -20,16 +20,16 @@ export class AttendeeService {
 
   /**
    * Fetch attendees from a remote API endpoint
-   * 
+   *
    * @param apiUrl - The API endpoint URL
    * @param searchTerm - Optional search term to filter results
    * @param queryParamName - Query parameter name for search (default: 'q')
    * @param responseDataPath - Path to attendees array in response (e.g., 'data.items')
    * @param timeoutMs - Request timeout in milliseconds (default: 10000)
    * @param useCache - Whether to use cached results (default: true)
-   * 
+   *
    * @returns Observable of Attendee array
-   * 
+   *
    * @example
    * this.attendeeService.fetchAttendees(
    *   'https://api.example.com/contacts',
@@ -124,7 +124,7 @@ export class AttendeeService {
 
   /**
    * Extract attendees from response object using path notation
-   * 
+   *
    * @example
    * response = { data: { items: [...] } }
    * path = 'data.items'

@@ -24,6 +24,9 @@
       "ngx-scheduler": [
         "./dist/ngx-scheduler"
       ],
+      "@adelsoli/ngx-scheduler": [
+        "./dist/ngx-scheduler"
+      ],
       "test": [
         "./dist/test"
       ]

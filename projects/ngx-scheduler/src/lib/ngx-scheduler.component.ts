@@ -58,15 +58,15 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showBusinessDayOnly = false;
   @Input() headerFormat = 'Do MMM YYYY';
   @Input() minRowHeight = 40;
-  @Input() maxHeight: string = null;
+  @Input() maxHeight: string | null = null;
   @Input() text = new Text();
-  @Input() items: Item[];
-  @Input() sections: Section[];
-  @Input() periods: Period[];
+  @Input() items: Item[] = [];
+  @Input() sections: Section[] = [];
+  @Input() periods: Period[] = [];
   @Input() events: Events = new Events();
   @Input() start = moment().startOf('day');
-  @Input() selectedFromTime: moment.Moment = null;
-  @Input() selectedToTime: moment.Moment = null;
+  @Input() selectedFromTime: moment.Moment | null = null;
+  @Input() selectedToTime: moment.Moment | null = null;
 
   // Attendee grouping and inline add controls
   @Input() attendeeGroupConfigs: AttendeeGroupConfig[] = [
@@ -87,13 +87,13 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       } else {
         this.attendeeGroups = this.attendeeGroupConfigs.map(cfg => ({ key: cfg.key, title: cfg.title, attendees: [] }));
       }
-      
+
       // If groups are configured, derive sections from groups instead of using the sections input
       if (this.attendeeGroupConfigs && this.attendeeGroupConfigs.length > 0) {
         this.rebuildSectionsFromGroups();
       }
     }
-    
+
     private rebuildSectionsFromGroups(): void {
       // Build sections array with group titles, comboboxes, and attendees for unified grid
       const groupSections: Section[] = [];
@@ -107,7 +107,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
           rowType: 'group-title',
           groupKey: group.key
         });
-        
+
         // Add row for combobox
         groupSections.push({
           id: `combobox-${group.key}`,
@@ -117,7 +117,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
           rowType: 'combobox',
           groupKey: group.key
         });
-        
+
         // Add attendee rows
         group.attendees.forEach(attendee => {
           const section = this.attendeeToSection(attendee);
@@ -159,7 +159,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
 
       // Add to group's attendee list immutably
       group.attendees = [...group.attendees, attendee];
-      
+
       // Rebuild sections and refresh view
       this.rebuildSectionsFromGroups();
       this.refreshView();
@@ -169,7 +169,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       const group = this.attendeeGroups.find(g => g.key === groupKey);
       if (!group) return;
       group.attendees = group.attendees.filter(a => a.id !== attendeeId);
-      
+
       // Rebuild sections and refresh view
       this.rebuildSectionsFromGroups();
       this.refreshView();
@@ -183,15 +183,15 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       const now = this.start || moment().startOf('day');
       const eventCount = 2 + Math.floor(Math.random() * 2); // 2-3 events
       const attendeeId = String(attendee.id);
-      
+
       for (let i = 0; i < eventCount; i++) {
         const eventStart = now.clone().add(i * 6, 'hours').add(Math.random() * 4, 'hours');
         const eventEnd = eventStart.clone().add(1 + Math.random() * 1.5, 'hours');
-        
+
         const eventId = `event-${attendeeId}-${Date.now()}-${i}`;
         const statuses = ['busy', 'tentative', 'free'];
         const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-        
+
         const newItem: Item = {
           id: eventId as any,
           sectionID: attendeeId,
@@ -203,7 +203,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
           attendeeResponse: 'accepted',
           classes: ''
         };
-        
+
         this.items = [...this.items, newItem];
       }
       */
@@ -219,15 +219,15 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
         type: 'attendee'
       } as Section;
     }
-  currentTimeIndicatorPosition: string;
+  currentTimeIndicatorPosition!: string;
   currentTimeVisibility = 'visible';
-  currentTimeTitle: string;
-  ShowCurrentTimeHandle = null;
+  currentTimeTitle!: string;
+  ShowCurrentTimeHandle: ReturnType<typeof setTimeout> | null = null;
   SectionLeftMeasure = '0';
-  currentPeriod: Period;
+  currentPeriod!: Period;
   currentPeriodMinuteDiff = 0;
-  header: Header[];
-  sectionItems: SectionItem[];
+  header!: Header[];
+  sectionItems!: SectionItem[];
   subscription = new Subscription();
   Math = Math;
 
@@ -260,7 +260,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
         this.changePeriod(this.currentPeriod, false);
       }
     }
-    
+
     // React to changes in initialAttendeeGroups
     if (changes['initialAttendeeGroups'] && !changes['initialAttendeeGroups'].firstChange) {
       this.initializeAttendeeGroups();
@@ -314,7 +314,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
 
     const unifiedElement = event.target as HTMLElement;
     this.currentHorizontalScrollLeft = unifiedElement.scrollLeft;
-    
+
     if (this.headerScrollElement) {
       this.headerScrollElement.nativeElement.scrollLeft = unifiedElement.scrollLeft;
     }
@@ -395,7 +395,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     // Calculate width in pixels
     const durationMinutes = Math.abs(toMoment.diff(fromMoment, 'minutes'));
     const widthPixels = (durationMinutes / minutesPerSlot) * slotWidthPixels;
-    
+
     // Clamp width to not exceed the period end
     const maxRightPixels = leftColumnWidth + (this.currentPeriodMinuteDiff / minutesPerSlot) * slotWidthPixels;
     const finalWidth = Math.min(widthPixels, maxRightPixels - leftPixels);
@@ -435,13 +435,13 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       perSectionItem.section = section;
       perSectionItem.rowType = section.rowType;
       perSectionItem.groupKey = section.groupKey;
-      
+
       // Set group title for group-title rows
       if (section.rowType === 'group-title') {
         const group = this.attendeeGroups.find(g => g.key === section.groupKey);
         perSectionItem.groupTitle = group ? group.title : section.name;
       }
-      
+
       // Set appropriate height based on row type
       if (section.rowType === 'group-title') {
         perSectionItem.minRowHeight = 30;
@@ -450,7 +450,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       } else {
         perSectionItem.minRowHeight = this.minRowHeight;
       }
-      
+
       this.sectionItems.push(perSectionItem);
     });
   }
@@ -476,7 +476,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       });
     });
 
-    const sortedItems = itemMetas.reduce((sortItems: {}, itemMeta: ItemMeta) => {
+    const sortedItems = itemMetas.reduce((sortItems: { [key: number]: ItemMeta[] }, itemMeta: ItemMeta) => {
       const index = this.sectionItems.findIndex(sectionItem => sectionItem.section.id === itemMeta.item.sectionID);
       if (!sortItems[index]) {
         sortItems[index] = [];
@@ -512,14 +512,15 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     return itemMeta;
   }
 
-  calCssTop(sortedItems) {
+  calCssTop(sortedItems: { [key: number]: ItemMeta[] }) {
     for (const prop of Object.keys(sortedItems)) {
-      for (let i = 0; i < sortedItems[prop].length; i++) {
+      const propKey = parseInt(prop, 10);
+      for (let i = 0; i < sortedItems[propKey].length; i++) {
         let elemBottom;
-        const elem = sortedItems[prop][i];
+        const elem = sortedItems[propKey][i];
 
         for (let prev = 0; prev < i; prev++) {
-          const prevElem = sortedItems[prop][prev];
+          const prevElem = sortedItems[propKey][prev];
           const prevElemBottom = prevElem.cssTop + this.minRowHeight;
           elemBottom = elem.cssTop + this.minRowHeight;
 
@@ -585,7 +586,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.currentTimeVisibility = 'hidden';
     }
-    this.ShowCurrentTimeHandle = setTimeout(this.showCurrentTimeIndicator, 30000);
+    this.ShowCurrentTimeHandle = window.setTimeout(() => this.showCurrentTimeIndicator(), 30000) as any;
   }
 
   gotoToday() {
@@ -612,7 +613,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   getDatesBetweenTwoDates(format: string, index: number): Header {
     const now = moment(this.start);
     const dates = new Header();
-    let prev: string;
+    let prev: string | undefined;
     let colspan = 0;
 
     while (now.isBefore(this.end)) {
@@ -636,7 +637,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     return dates;
   }
 
-  getNumberOfWeekendDays(startDate, endDate) {
+  getNumberOfWeekendDays(startDate: moment.Moment, endDate: moment.Moment) {
     let count = 0;
     while (startDate.isBefore(endDate) || startDate.isSame(endDate)) {
       if ((startDate.day() === 0 || startDate.day() === 6)) {

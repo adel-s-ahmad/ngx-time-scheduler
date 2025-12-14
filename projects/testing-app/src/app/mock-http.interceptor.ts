@@ -43,7 +43,7 @@ export class MockHttpInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Check if this is a mock API URL
     const mockUrl = this.getMockUrlPath(req.url);
-    
+
     console.log('[MockHttpInterceptor] Request URL:', req.url);
     console.log('[MockHttpInterceptor] Mock URL path:', mockUrl);
     console.log('[MockHttpInterceptor] Available endpoints:', Object.keys(this.mockData));
@@ -51,7 +51,7 @@ export class MockHttpInterceptor implements HttpInterceptor {
 
     if (mockUrl in this.mockData) {
       console.log('[MockHttpInterceptor] Handling mock request for:', mockUrl);
-      
+
       // Get search term from query params
       const searchTerm = req.params.get('q')?.toLowerCase() ?? '';
       console.log('[MockHttpInterceptor] Search term:', searchTerm);
@@ -68,7 +68,7 @@ export class MockHttpInterceptor implements HttpInterceptor {
           (item.email || '').toLowerCase().includes(searchTerm)
         );
       }
-      
+
       console.log('[MockHttpInterceptor] Filtered items:', filteredItems);
 
       // Return mock response with 300ms delay to simulate network latency
