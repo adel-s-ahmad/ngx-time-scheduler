@@ -1,0 +1,60 @@
+<div class="attendee-combobox-wrapper">
+  <div class="combobox-input-wrapper">
+    <input
+      #inputElement
+      type="text"
+      class="combobox-input"
+      [placeholder]="placeholder"
+      [(ngModel)]="filterText"
+      (input)="onInputChange()"
+      (focus)="onInputFocus()"
+      (click)="onInputClick()"
+      (blur)="onInputBlur()"
+      (keydown)="onKeyDown($event)"
+      [readonly]="isLoading"
+      autocomplete="off"
+    />
+    <span class="combobox-dropdown-icon" [class.is-open]="isOpen" [class.is-loading]="isLoading">
+      <span *ngIf="!isLoading">▼</span>
+      <span *ngIf="isLoading" class="loading-spinner"></span>
+    </span>
+  </div>
+</div>
+
+<!-- Dropdown container - will be moved to body when open -->
+<div #dropdownElement class="combobox-dropdown-container" *ngIf="isOpen">
+  <!-- Loading state -->
+  <div class="combobox-dropdown-portal" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Loading...</span>
+  </div>
+
+  <!-- Results dropdown -->
+  <div class="combobox-dropdown-portal combobox-dropdown-list" 
+       *ngIf="!isLoading && filteredItems.length > 0"
+       (mousedown)="$event.preventDefault()">
+    <div
+      class="combobox-option"
+      *ngFor="let item of filteredItems; let i = index; trackBy: trackByFn"
+      [class.is-selected]="i === selectedIndex"
+      (mousedown)="onOptionMouseDown(item, $event)"
+      (click)="selectItem(item)"
+      (mouseenter)="onOptionHover(i)"
+    >
+      <div class="option-name">{{ item.displayName }}</div>
+      <div class="option-email" *ngIf="item.email">{{ item.email }}</div>
+    </div>
+  </div>
+
+  <!-- No results message -->
+  <div class="combobox-dropdown-portal combobox-no-results-msg" 
+       *ngIf="!isLoading && filteredItems.length === 0 && filterText.trim()">
+    No items found
+  </div>
+
+  <!-- Empty async state -->
+  <div class="combobox-dropdown-portal combobox-no-results-msg" 
+       *ngIf="!isLoading && filteredItems.length === 0 && !filterText.trim() && asyncConfig?.apiUrl">
+    Start typing to search...
+  </div>
+</div>

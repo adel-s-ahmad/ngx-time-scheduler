@@ -19,17 +19,20 @@
 
   <div class="scheduler-container">
     <ngx-ts
-      [items]="items"
-      [periods]="periods"
-      [sections]="sections"
-      [events]="events"
-      [showBusinessDayOnly]="false"
-      [showHeaderTitle]="true"
-      [start]="startScheduler"
-      [allowDragging]="false"
-      [text]="txt"
-      [selectedFromTime]="selectedFromTimeMoment"
-      [selectedToTime]="selectedToTimeMoment"
+       [items]="items"
+       [periods]="periods"
+       [sections]="sections"
+       [events]="events"
+       [showBusinessDayOnly]="false"
+       [showHeaderTitle]="true"
+       [start]="startScheduler"
+       [allowDragging]="false"
+       [text]="txt"
+       [selectedFromTime]="selectedFromTimeMoment"
+       [selectedToTime]="selectedToTimeMoment"
+       [attendeeGroupConfigs]="attendeeGroupConfigs"
+       [availableAttendees]="availableAttendees"
+       [initialAttendeeGroups]="initialAttendeeGroups"
     ></ngx-ts>
   </div>
 

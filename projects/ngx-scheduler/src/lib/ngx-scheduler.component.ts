@@ -1,5 +1,7 @@
 import {ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import {
   HeaderDetails,
@@ -10,8 +12,13 @@ import {
   SectionItem,
   Section,
   Text,
-  Events
+  Events,
+  Attendee,
+  AttendeeGroup,
+  AttendeeGroupConfig,
+  AvailabilityStatus
 } from './ngx-scheduler.model';
+import { AttendeeComboboxComponent } from './attendee-combobox/attendee-combobox.component';
 import moment_, { Moment } from 'moment';
 import {Subscription} from 'rxjs';
 import { NgxTimeSchedulerService } from './ngx-scheduler.service';
@@ -24,15 +31,20 @@ const moment = moment_;
   styleUrls: ['./ngx-scheduler.component.css']
 })
 export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
-  @ViewChild('sectionTd') set SectionTd(elementRef: ElementRef) {
-    this.SectionLeftMeasure = elementRef.nativeElement.clientWidth + 'px';
-    this.changeDetector.detectChanges();
+  @ViewChild('sectionTd') set SectionTd(elementRef: ElementRef | undefined) {
+    if (elementRef) {
+      this.SectionLeftMeasure = elementRef.nativeElement.clientWidth + 'px';
+      this.changeDetector.detectChanges();
+    }
   }
 
   @ViewChild('attendeeRows') attendeeRowsElement: ElementRef | undefined;
   @ViewChild('schedulerContent') schedulerContentElement: ElementRef | undefined;
+  @ViewChild('unifiedScroll') unifiedScrollElement: ElementRef | undefined;
+  @ViewChild('headerScroll') headerScrollElement: ElementRef | undefined;
 
   private isScrolling = false;
+  currentHorizontalScrollLeft = 0;
 
   @Input() currentTimeFormat = 'DD-MMM-YYYY HH:mm';
   @Input() showCurrentTime = true;
@@ -56,8 +68,157 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedFromTime: moment.Moment = null;
   @Input() selectedToTime: moment.Moment = null;
 
+  // Attendee grouping and inline add controls
+  @Input() attendeeGroupConfigs: AttendeeGroupConfig[] = [
+    { key: 'contacts', title: 'Contacts' },
+    { key: 'users', title: 'Users' },
+    { key: 'rooms', title: 'Rooms' }
+  ];
+  @Input() availableAttendees: Attendee[] = [];
+  @Input() initialAttendeeGroups: AttendeeGroup[] | null = null;
+  attendeeGroups: AttendeeGroup[] = [];
+
   end = moment().endOf('day');
   showGotoModal = false;
+
+    initializeAttendeeGroups(): void {
+      if (this.initialAttendeeGroups && this.initialAttendeeGroups.length) {
+        this.attendeeGroups = this.initialAttendeeGroups.map(g => ({ key: g.key, title: g.title, attendees: [...(g.attendees || [])] }));
+      } else {
+        this.attendeeGroups = this.attendeeGroupConfigs.map(cfg => ({ key: cfg.key, title: cfg.title, attendees: [] }));
+      }
+      
+      // If groups are configured, derive sections from groups instead of using the sections input
+      if (this.attendeeGroupConfigs && this.attendeeGroupConfigs.length > 0) {
+        this.rebuildSectionsFromGroups();
+      }
+    }
+    
+    private rebuildSectionsFromGroups(): void {
+      // Build sections array with group titles, comboboxes, and attendees for unified grid
+      const groupSections: Section[] = [];
+      this.attendeeGroups.forEach(group => {
+        // Add row for group title
+        groupSections.push({
+          id: `group-title-${group.key}`,
+          name: group.title,
+          isSpacer: true,
+          isVisible: true,
+          rowType: 'group-title',
+          groupKey: group.key
+        });
+        
+        // Add row for combobox
+        groupSections.push({
+          id: `combobox-${group.key}`,
+          name: '',
+          isSpacer: true,
+          isVisible: true,
+          rowType: 'combobox',
+          groupKey: group.key
+        });
+        
+        // Add attendee rows
+        group.attendees.forEach(attendee => {
+          const section = this.attendeeToSection(attendee);
+          section.rowType = 'attendee';
+          section.groupKey = group.key;
+          groupSections.push(section);
+        });
+      });
+      this.sections = groupSections;
+    }
+
+    getFilteredAttendees(groupKey: string): Attendee[] {
+      return this.availableAttendees.filter(a => !a.type || a.type === groupKey);
+    }
+
+    getAsyncConfigForGroup(groupKey: string): any {
+      const config = this.attendeeGroupConfigs.find(cfg => cfg.key === groupKey);
+      if (!config || !config.apiUrl) return undefined;
+
+      return {
+        apiUrl: config.apiUrl,
+        queryParamName: config.queryParamName ?? 'q',
+        responseDataPath: config.responseDataPath ?? '',
+        debounceMs: 300,
+        timeoutMs: 10000
+      };
+    }
+
+    onAttendeeSelected(groupKey: string, attendee: Attendee): void {
+      const group = this.attendeeGroups.find(g => g.key === groupKey);
+      if (!group) return;
+
+      // Avoid duplicates
+      if (group.attendees.find(a => a.id === attendee.id)) {
+        // Show feedback for duplicate attempt
+        console.warn(`Attendee "${attendee.displayName}" is already in the ${group.title} group`);
+        return;
+      }
+
+      // Add to group's attendee list immutably
+      group.attendees = [...group.attendees, attendee];
+      
+      // Rebuild sections and refresh view
+      this.rebuildSectionsFromGroups();
+      this.refreshView();
+    }
+
+    removeAttendeeFromGroup(groupKey: string, attendeeId: string | number): void {
+      const group = this.attendeeGroups.find(g => g.key === groupKey);
+      if (!group) return;
+      group.attendees = group.attendees.filter(a => a.id !== attendeeId);
+      
+      // Rebuild sections and refresh view
+      this.rebuildSectionsFromGroups();
+      this.refreshView();
+    }
+
+    private generateSampleEventsForAttendee(attendee: Attendee): void {
+      // DISABLED: Auto-generated sample events removed per user request
+      // This method is kept for backward compatibility but is no longer called
+      /*
+      // Create 2-3 sample events for the new attendee spread across the visible period
+      const now = this.start || moment().startOf('day');
+      const eventCount = 2 + Math.floor(Math.random() * 2); // 2-3 events
+      const attendeeId = String(attendee.id);
+      
+      for (let i = 0; i < eventCount; i++) {
+        const eventStart = now.clone().add(i * 6, 'hours').add(Math.random() * 4, 'hours');
+        const eventEnd = eventStart.clone().add(1 + Math.random() * 1.5, 'hours');
+        
+        const eventId = `event-${attendeeId}-${Date.now()}-${i}`;
+        const statuses = ['busy', 'tentative', 'free'];
+        const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+        
+        const newItem: Item = {
+          id: eventId as any,
+          sectionID: attendeeId,
+          name: `${attendee.displayName}'s Event ${i + 1}`,
+          start: eventStart,
+          end: eventEnd,
+          status: randomStatus as AvailabilityStatus,
+          organizer: attendee.displayName,
+          attendeeResponse: 'accepted',
+          classes: ''
+        };
+        
+        this.items = [...this.items, newItem];
+      }
+      */
+    }
+
+    private attendeeToSection(a: Attendee): Section {
+      return {
+        id: String(a.id),
+        name: a.displayName,
+        email: a.email,
+        tooltip: a.email || a.displayName,
+        isVisible: true,
+        type: 'attendee'
+      } as Section;
+    }
   currentTimeIndicatorPosition: string;
   currentTimeVisibility = 'visible';
   currentTimeTitle: string;
@@ -78,6 +239,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initializeAttendeeGroups();
     this.setSectionsInSectionItems();
     this.changePeriod(this.periods[0], false);
     this.itemPush();
@@ -98,6 +260,12 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
         this.changePeriod(this.currentPeriod, false);
       }
     }
+    
+    // React to changes in initialAttendeeGroups
+    if (changes['initialAttendeeGroups'] && !changes['initialAttendeeGroups'].firstChange) {
+      this.initializeAttendeeGroups();
+      this.refreshView();
+    }
   }
 
   toggleSectionVisibility(section: Section): void {
@@ -110,8 +278,9 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     this.changePeriod(this.currentPeriod, false);
   }
 
-  trackByFn(index, item) {
-    return index;
+  trackByFn(index: number, item: any) {
+    // Prefer stable ids when available to avoid rendering glitches
+    return (item && (item.id ?? item.section?.id ?? item.displayName)) ?? index;
   }
 
   syncSchedulerScroll(event: Event): void {
@@ -138,19 +307,40 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     setTimeout(() => this.isScrolling = false, 10);
   }
 
-  getStatusLabel(status?: string): string {
-    switch(status) {
-      case 'busy': return 'Busy';
-      case 'free': return 'Free';
-      case 'tentative': return 'Tentative';
-      case 'out-of-office': return 'Out of Office';
-      case 'working-elsewhere': return 'Working Elsewhere';
-      case 'unknown': return 'Unknown';
-      default: return 'Busy';
+  // Unified grid scroll handler - syncs horizontal scroll with header
+  onUnifiedScroll(event: Event): void {
+    if (this.isScrolling) return;
+    this.isScrolling = true;
+
+    const unifiedElement = event.target as HTMLElement;
+    this.currentHorizontalScrollLeft = unifiedElement.scrollLeft;
+    
+    if (this.headerScrollElement) {
+      this.headerScrollElement.nativeElement.scrollLeft = unifiedElement.scrollLeft;
     }
+
+    setTimeout(() => this.isScrolling = false, 10);
   }
 
-  getTotalTimeSlots(): number {
+  // Helper to determine if this is the first attendee in a section (for separator rendering)
+  isFirstAttendeeInSection(sectionItem: SectionItem): boolean {
+    // Show separators for all attendee rows, not just the first one
+    return sectionItem.rowType === 'attendee';
+  }
+
+    getStatusLabel(status?: string): string {
+      switch(status) {
+        case 'busy': return 'Busy';
+        case 'free': return 'Free';
+        case 'tentative': return 'Tentative';
+        case 'out-of-office': return 'Out of Office';
+        case 'working-elsewhere': return 'Working Elsewhere';
+        case 'unknown': return 'Unknown';
+        default: return 'Busy';
+      }
+    }
+
+    getTotalTimeSlots(): number {
     // Return the number of time slots in the last header row (time slots row)
     // Each header detail has a colspan that represents how many slots it spans
     if (!this.header || this.header.length === 0) {
@@ -194,19 +384,25 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     // Total width = getTotalTimeSlots() * 60px
     const slotWidthPixels = 60;
     const totalSlots = this.getTotalTimeSlots();
+    const leftColumnWidth = 250; // Width of the attendees column
 
-    // Calculate left position in pixels
-    const minutesFromStart = Math.abs(this.start.diff(fromMoment, 'minutes'));
+    // Calculate left position in pixels (relative to time slots, not including the left column)
+    const minutesFromStart = fromMoment.diff(this.start, 'minutes');
     const minutesPerSlot = this.currentPeriodMinuteDiff / totalSlots;
-    const leftPixels = (minutesFromStart / minutesPerSlot) * slotWidthPixels;
+    const timeSlotLeftPixels = (minutesFromStart / minutesPerSlot) * slotWidthPixels;
+    const leftPixels = leftColumnWidth + timeSlotLeftPixels;
 
     // Calculate width in pixels
-    const durationMinutes = Math.abs(fromMoment.diff(toMoment, 'minutes'));
+    const durationMinutes = Math.abs(toMoment.diff(fromMoment, 'minutes'));
     const widthPixels = (durationMinutes / minutesPerSlot) * slotWidthPixels;
+    
+    // Clamp width to not exceed the period end
+    const maxRightPixels = leftColumnWidth + (this.currentPeriodMinuteDiff / minutesPerSlot) * slotWidthPixels;
+    const finalWidth = Math.min(widthPixels, maxRightPixels - leftPixels);
 
     return {
       left: leftPixels + 'px',
-      width: widthPixels + 'px'
+      width: finalWidth + 'px'
     };
   }
 
@@ -237,7 +433,24 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     this.sections.forEach(section => {
       const perSectionItem = new SectionItem();
       perSectionItem.section = section;
-      perSectionItem.minRowHeight = this.minRowHeight;
+      perSectionItem.rowType = section.rowType;
+      perSectionItem.groupKey = section.groupKey;
+      
+      // Set group title for group-title rows
+      if (section.rowType === 'group-title') {
+        const group = this.attendeeGroups.find(g => g.key === section.groupKey);
+        perSectionItem.groupTitle = group ? group.title : section.name;
+      }
+      
+      // Set appropriate height based on row type
+      if (section.rowType === 'group-title') {
+        perSectionItem.minRowHeight = 30;
+      } else if (section.rowType === 'combobox') {
+        perSectionItem.minRowHeight = 30;
+      } else {
+        perSectionItem.minRowHeight = this.minRowHeight;
+      }
+      
       this.sectionItems.push(perSectionItem);
     });
   }

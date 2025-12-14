@@ -38,46 +38,23 @@
     </h2>
   </div>
 
-  <!-- Main scheduler container -->
-  <div class="outlook-scheduler-container">
-    <!-- Unified scheduler grid with attendees as rows -->
-    <div class="scheduler-grid-wrapper">
-      <!-- Fixed left column for headers and attendees -->
-      <div class="fixed-left-column">
-        <!-- Header spacers -->
-        <div class="time-header-spacer" *ngFor="let headerRow of header; trackBy: trackByFn; let rowIndex = index"
-             [ngClass]="{'header-row-date': rowIndex === 0, 'header-row-time': rowIndex === header.length - 1}">
-        </div>
-        <!-- Attendee names -->
-        <div class="attendee-rows-container" #attendeeRows (scroll)="syncSchedulerScroll($event)">
-          <div class="attendee-row"
-               *ngFor="let sectionItem of sectionItems; trackBy: trackByFn"
-               [style.display]="(sectionItem.section.isVisible !== false) ? 'flex' : 'none'"
-               [style.height]="sectionItem.minRowHeight + 'px'"
-               (click)="toggleSectionVisibility(sectionItem.section)">
-            <div class="attendee-checkbox">
-              <input type="checkbox"
-                     [checked]="sectionItem.section.isVisible !== false"
-                     (change)="toggleSectionVisibility(sectionItem.section)"
-                     (click)="$event.stopPropagation()">
-            </div>
-            <div class="attendee-info">
-              <div class="attendee-name">{{sectionItem.section.name}}</div>
-              <div class="attendee-email" *ngIf="sectionItem.section.email">{{sectionItem.section.email}}</div>
-            </div>
-          </div>
-        </div>
+  <!-- Main unified grid container -->
+  <div class="unified-scheduler-container">
+    <!-- Header row with fixed left column -->
+    <div class="unified-grid-header">
+      <!-- Left column header -->
+      <div class="header-left-column">
+        <div class="attendees-header-label">{{text.SectionTitle || 'Attendees'}}</div>
       </div>
-
-      <!-- Scrollable right column for headers and content -->
-      <div class="scrollable-right-column" #schedulerContent (scroll)="syncAttendeeScroll($event)">
-        <!-- Time header rows -->
+      
+      <!-- Right column headers (time slots) - scrollable horizontally -->
+      <div class="header-right-column" #headerScroll>
         <div class="time-header-wrapper" [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
           <div class="time-header-row" *ngFor="let headerRow of header; trackBy: trackByFn; let rowIndex = index"
                [ngClass]="{'header-row-date': rowIndex === 0, 'header-row-time': rowIndex === header.length - 1}"
                [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
             <ng-container *ngIf="rowIndex === 0">
-              <!-- Date row - each header is a day boundary -->
+              <!-- Date row -->
               <div class="time-slot-header day-boundary-header"
                    *ngFor="let dateTime of headerRow.headerDetails; trackBy: trackByFn"
                    [attr.data-colspan]="dateTime.colspan"
@@ -89,7 +66,7 @@
               </div>
             </ng-container>
             <ng-container *ngIf="rowIndex !== 0">
-              <!-- Time row - mark every 24th slot as day boundary -->
+              <!-- Time row -->
               <div class="time-slot-header"
                    *ngFor="let dateTime of headerRow.headerDetails; trackBy: trackByFn; let i = index"
                    [ngClass]="{'day-boundary-header': (i + 1) % 24 === 0}"
@@ -103,77 +80,126 @@
             </ng-container>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Time slots and events -->
-        <div class="time-slots-content">
-          <!-- Vertical separators for hours and days -->
-          <div class="time-separators" [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
-            <!-- Hour separators -->
-            <div class="hour-separator"
-                 *ngFor="let slot of [].constructor(getTotalTimeSlots()); let i = index"
-                 [style.left]="(i * 60 - 1) + 'px'">
+    <!-- Unified grid body - single scroll container -->
+    <div class="unified-grid-body" #unifiedScroll (scroll)="onUnifiedScroll($event)" [style.position]="'relative'">
+      <!-- Rows container with unified selection overlay -->
+      <div class="unified-grid-rows">
+        <!-- Each row contains left column (attendee/title/combobox) and right column (timeline) -->
+        <div class="unified-grid-row"
+             *ngFor="let sectionItem of sectionItems; trackBy: trackByFn"
+             [ngClass]="{
+               'row-group-title': sectionItem.rowType === 'group-title',
+               'row-combobox': sectionItem.rowType === 'combobox',
+               'row-attendee': sectionItem.rowType === 'attendee'
+             }"
+             [style.display]="(sectionItem.section.isVisible !== false) ? 'flex' : 'none'"
+             [style.height]="sectionItem.minRowHeight + 'px'">
+          
+          <!-- Left column: Fixed width for attendee info -->
+          <div class="row-left-column">
+            <!-- Group title row -->
+            <div class="group-title-cell" *ngIf="sectionItem.rowType === 'group-title'">
+              {{sectionItem.groupTitle || sectionItem.section.name}}
             </div>
-            <!-- Day separators -->
-            <div class="day-separator"
-                 *ngFor="let day of [].constructor(Math.ceil(getTotalTimeSlots() / 24)); let i = index"
-                 [style.left]="(i * 1440 - 12) + 'px'">
+            
+            <!-- Combobox row -->
+            <div class="combobox-cell" *ngIf="sectionItem.rowType === 'combobox'">
+              <app-attendee-combobox
+                [items]="getFilteredAttendees(sectionItem.groupKey)"
+                [placeholder]="'Add from ' + sectionItem.groupTitle + '...'"
+                [asyncConfig]="getAsyncConfigForGroup(sectionItem.groupKey)"
+                (itemSelected)="onAttendeeSelected(sectionItem.groupKey, $event)">
+              </app-attendee-combobox>
+            </div>
+            
+            <!-- Attendee row -->
+            <div class="attendee-cell" *ngIf="sectionItem.rowType === 'attendee'">
+              <div class="attendee-checkbox">
+                <button type="button" 
+                        *ngIf="sectionItem.groupKey"
+                        class="remove-attendee-btn-icon" 
+                        (click)="removeAttendeeFromGroup(sectionItem.groupKey, sectionItem.section.id)" 
+                        title="Remove">×</button>
+                <input type="checkbox"
+                       *ngIf="!sectionItem.groupKey"
+                       [checked]="sectionItem.section.isVisible !== false"
+                       (change)="toggleSectionVisibility(sectionItem.section)"
+                       (click)="$event.stopPropagation()">
+              </div>
+              <div class="attendee-info">
+                <div class="attendee-name">{{sectionItem.section.name}}</div>
+                <div class="attendee-email" *ngIf="sectionItem.section.email">{{sectionItem.section.email}}</div>
+              </div>
             </div>
           </div>
-
-          <!-- Selection overlay spanning all visible attendees -->
-          <div class="time-selection-overlay-wrapper" *ngIf="getSelectionStyle()">
-            <div class="time-selection-overlay"
-                 [style.left]="getSelectionStyle().left"
-                 [style.width]="getSelectionStyle().width">
-            </div>
-          </div>
-
-          <div class="time-slot-row"
-               *ngFor="let sectionItem of sectionItems; trackBy: trackByFn"
-               [style.display]="(sectionItem.section.isVisible !== false) ? 'flex' : 'none'">
+          
+          <!-- Right column: Timeline with events -->
+          <div class="row-right-column">
             <div class="time-slots"
                  [style.height]="sectionItem.minRowHeight + 'px'"
                  [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
-              <!-- Events for this section -->
-              <div class="calendar-event"
-                   *ngFor="let itemMeta of sectionItem.itemMetas; trackBy: trackByFn"
-                   [ngClass]="'status-' + (itemMeta.item.status || 'busy')"
-                   (click)="events.ItemClicked ? events.ItemClicked(itemMeta.item) : false"
-                   (contextmenu)="events.ItemContextMenu ? events.ItemContextMenu(itemMeta.item, $event) : false"
-                   [style.height]="getEventStyle(itemMeta, sectionItem.minRowHeight).height"
-                   [style.top]="getEventStyle(itemMeta, sectionItem.minRowHeight).top"
-                   [style.left]="getEventStyle(itemMeta, sectionItem.minRowHeight).left"
-                   [style.width]="getEventStyle(itemMeta, sectionItem.minRowHeight).width">
-                <div class="event-content">
-                  <div class="event-title">{{itemMeta.item.name}}</div>
-                  <div class="event-time" *ngIf="itemMeta.isStart">
-                    {{itemMeta.item.start.format('HH:mm')}}
-                  </div>
+              
+              <!-- Vertical separators (only on first attendee row of each group) -->
+              <div class="time-separators" 
+                   *ngIf="sectionItem.rowType === 'attendee' && isFirstAttendeeInSection(sectionItem)"
+                   [style.min-width]="(getTotalTimeSlots() * 60) + 'px'">
+                <!-- Hour separators -->
+                <div class="hour-separator"
+                     *ngFor="let slot of [].constructor(getTotalTimeSlots()); let i = index"
+                     [style.left]="(i * 60 - 1) + 'px'">
                 </div>
-                <!-- Tooltip on hover -->
-                <div class="event-tooltip">
-                  <div class="tooltip-row">
-                    <span class="tooltip-label">Title:</span>
-                    <span class="tooltip-value">{{itemMeta.item.name}}</span>
-                  </div>
-                  <div class="tooltip-row">
-                    <span class="tooltip-label">Time:</span>
-                    <span class="tooltip-value">{{itemMeta.item.start.format('MMM D, HH:mm')}} - {{itemMeta.item.end.format(itemMeta.item.start.format('YYYY-MM-DD') !== itemMeta.item.end.format('YYYY-MM-DD') ? 'MMM D, HH:mm' : 'HH:mm')}}</span>
-                  </div>
-                  <div class="tooltip-row">
-                    <span class="tooltip-label">Status:</span>
-                    <span class="tooltip-value">{{getStatusLabel(itemMeta.item.status)}}</span>
-                  </div>
-                  <div class="tooltip-row" *ngIf="itemMeta.item.organizer">
-                    <span class="tooltip-label">Organizer:</span>
-                    <span class="tooltip-value">{{itemMeta.item.organizer}}</span>
-                  </div>
+                <!-- Day separators -->
+                <div class="day-separator"
+                     *ngFor="let day of [].constructor(Math.ceil(getTotalTimeSlots() / 24)); let i = index"
+                     [style.left]="(i * 1440 - 12) + 'px'">
                 </div>
               </div>
 
-              <!-- Current time indicator -->
+              <!-- Events (only for attendee rows) -->
+              <ng-container *ngIf="sectionItem.rowType === 'attendee'">
+                <div class="calendar-event"
+                     *ngFor="let itemMeta of sectionItem.itemMetas; trackBy: trackByFn"
+                     [ngClass]="'status-' + (itemMeta.item.status || 'busy')"
+                     (click)="events.ItemClicked ? events.ItemClicked(itemMeta.item) : false"
+                     (contextmenu)="events.ItemContextMenu ? events.ItemContextMenu(itemMeta.item, $event) : false"
+                     [style.height]="getEventStyle(itemMeta, sectionItem.minRowHeight).height"
+                     [style.top]="getEventStyle(itemMeta, sectionItem.minRowHeight).top"
+                     [style.left]="getEventStyle(itemMeta, sectionItem.minRowHeight).left"
+                     [style.width]="getEventStyle(itemMeta, sectionItem.minRowHeight).width">
+                  <div class="event-content">
+                    <div class="event-title">{{itemMeta.item.name}}</div>
+                    <div class="event-time" *ngIf="itemMeta.isStart">
+                      {{itemMeta.item.start.format('HH:mm')}}
+                    </div>
+                  </div>
+                  <!-- Tooltip on hover -->
+                  <div class="event-tooltip">
+                    <div class="tooltip-row">
+                      <span class="tooltip-label">Title:</span>
+                      <span class="tooltip-value">{{itemMeta.item.name}}</span>
+                    </div>
+                    <div class="tooltip-row">
+                      <span class="tooltip-label">Time:</span>
+                      <span class="tooltip-value">{{itemMeta.item.start.format('MMM D, HH:mm')}} - {{itemMeta.item.end.format(itemMeta.item.start.format('YYYY-MM-DD') !== itemMeta.item.end.format('YYYY-MM-DD') ? 'MMM D, HH:mm' : 'HH:mm')}}</span>
+                    </div>
+                    <div class="tooltip-row">
+                      <span class="tooltip-label">Status:</span>
+                      <span class="tooltip-value">{{getStatusLabel(itemMeta.item.status)}}</span>
+                    </div>
+                    <div class="tooltip-row" *ngIf="itemMeta.item.organizer">
+                      <span class="tooltip-label">Organizer:</span>
+                      <span class="tooltip-value">{{itemMeta.item.organizer}}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <!-- Current time indicator (only for attendee rows) -->
               <div class="current-time-indicator"
-                   *ngIf="showCurrentTime"
+                   *ngIf="sectionItem.rowType === 'attendee' && showCurrentTime"
                    [title]="currentTimeTitle"
                    [style.visibility]="currentTimeVisibility"
                    [style.left]="currentTimeIndicatorPosition">
@@ -181,6 +207,14 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Unified selection overlay -->
+      <div class="unified-selection-overlay-container" 
+           *ngIf="getSelectionStyle()"
+           [style.left]="getSelectionStyle().left"
+           [style.width]="getSelectionStyle().width"
+           [style.top]="'0'">
       </div>
     </div>
   </div>

@@ -18,12 +18,35 @@ export class AppComponent {
   items: Item[];
   txt: Text = new Text();
 
+  // Inline attendee add test data
+  attendeeGroupConfigs = [
+    { key: 'contacts', title: 'Contacts', apiUrl: '/api/contacts', queryParamName: 'q', responseDataPath: 'data' },
+    { key: 'users', title: 'Users', apiUrl: '/api/users', queryParamName: 'q', responseDataPath: 'data' },
+    { key: 'rooms', title: 'Rooms', apiUrl: '/api/rooms', queryParamName: 'q', responseDataPath: 'data' }
+  ];
+
+  availableAttendees = [
+    { id: 'c1', displayName: 'Ava Parker', email: 'ava.parker@company.com', type: 'contacts' },
+    { id: 'c2', displayName: 'Noah Lee', email: 'noah.lee@company.com', type: 'contacts' },
+    { id: 'u1', displayName: 'Sarah Johnson', email: 'sarah.johnson@company.com', type: 'users' },
+    { id: 'u2', displayName: 'Michael Chen', email: 'michael.chen@company.com', type: 'users' },
+    { id: 'u3', displayName: 'Emma Davis', email: 'emma.davis@company.com', type: 'users' },
+    { id: 'r1', displayName: 'Conference Room A', email: 'confroom.a@company.com', type: 'rooms' },
+    { id: 'r2', displayName: 'Zoom Room West', email: 'zoom.west@company.com', type: 'rooms' }
+  ];
+
+  initialAttendeeGroups = [
+    { key: 'contacts', title: 'Contacts', attendees: [{ id: 'c1', displayName: 'Ava Parker', email: 'ava.parker@company.com', type: 'contacts' }] },
+    { key: 'users', title: 'Users', attendees: [{ id: 'u1', displayName: 'Sarah Johnson', email: 'sarah.johnson@company.com', type: 'users' }] },
+    { key: 'rooms', title: 'Rooms', attendees: [{ id: 'r1', displayName: 'Conference Room A', email: 'confroom.a@company.com', type: 'rooms' }] }
+  ];
+
   from: Date = new Date();
   startScheduler: moment.Moment = moment();
-  selectedFromTime: Date = null;
-  selectedToTime: Date = null;
-  selectedFromTimeMoment: moment.Moment = null;
-  selectedToTimeMoment: moment.Moment = null;
+  selectedFromTime: Date | null = null;
+  selectedToTime: Date | null = null;
+  selectedFromTimeMoment: moment.Moment | null = null;
+  selectedToTimeMoment: moment.Moment | null = null;
 
   constructor(private service: NgxTimeSchedulerService) {
   }
@@ -60,152 +83,12 @@ export class AppComponent {
         timeFramePeriod: 60,
       }];
 
-    this.sections = [
-      {
-        name: 'Sarah Johnson',
-        id: '1',
-        email: 'sarah.johnson@company.com',
-        type: 'attendee',
-        isVisible: true
-      }, {
-        name: 'Michael Chen',
-        id: '2',
-        email: 'michael.chen@company.com',
-        type: 'attendee',
-        isVisible: true
-      }, {
-        name: 'Emma Davis',
-        id: '3',
-        email: 'emma.davis@company.com',
-        type: 'attendee',
-        isVisible: true
-      }, {
-        name: 'Conference Room A',
-        id: '4',
-        email: 'confroom.a@company.com',
-        type: 'room',
-        isVisible: true
-      }, {
-        name: 'Alex Rodriguez',
-        id: '5',
-        email: 'alex.rodriguez@company.com',
-        type: 'attendee',
-        isVisible: true
-      }];
+    // Start with no default attendees in scheduler; add via groups
+    this.sections = [];
 
     // Sample events with different availability statuses
-    this.items = [
-      {
-        id: 1,
-        sectionID: '1',
-        name: 'Team Standup',
-        start: moment().add(0, 'hours').startOf('hour').add(9, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(9, 'hours').add(30, 'minutes'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'Manager',
-        attendeeResponse: 'accepted',
-        classes: ''
-      },
-      {
-        id: 2,
-        sectionID: '2',
-        name: 'Team Standup',
-        start: moment().add(0, 'hours').startOf('hour').add(9, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(9, 'hours').add(30, 'minutes'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'Manager',
-        attendeeResponse: 'accepted',
-        classes: ''
-      },
-      {
-        id: 3,
-        sectionID: '3',
-        name: 'Team Standup',
-        start: moment().add(0, 'hours').startOf('hour').add(9, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(9, 'hours').add(30, 'minutes'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'Manager',
-        attendeeResponse: 'accepted',
-        classes: ''
-      },
-      {
-        id: 4,
-        sectionID: '4',
-        name: 'Team Standup',
-        start: moment().add(0, 'hours').startOf('hour').add(9, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(9, 'hours').add(30, 'minutes'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'Manager',
-        attendeeResponse: 'accepted',
-        classes: ''
-      },
-      {
-        id: 5,
-        sectionID: '1',
-        name: 'Project Planning',
-        start: moment().add(0, 'hours').startOf('hour').add(10, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(11, 'hours').add(30, 'minutes'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'Product Manager',
-        attendeeResponse: 'tentative',
-        classes: ''
-      },
-      {
-        id: 6,
-        sectionID: '2',
-        name: 'Client Presentation',
-        start: moment().add(0, 'hours').startOf('hour').add(14, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(15, 'hours'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'Sales Director',
-        attendeeResponse: 'accepted',
-        classes: ''
-      },
-      {
-        id: 7,
-        sectionID: '3',
-        name: 'Code Review',
-        start: moment().add(0, 'hours').startOf('hour').add(13, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(13, 'hours').add(45, 'minutes'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'Tech Lead',
-        attendeeResponse: 'accepted',
-        classes: ''
-      },
-      {
-        id: 8,
-        sectionID: '5',
-        name: 'One-on-One',
-        start: moment().add(0, 'hours').startOf('hour').add(15, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(15, 'hours').add(15, 'minutes'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'Manager',
-        attendeeResponse: 'pending',
-        classes: ''
-      },
-      {
-        id: 9,
-        sectionID: '1',
-        name: 'Out of Office',
-        start: moment().add(1, 'days').startOf('day').add(9, 'hours'),
-        end: moment().add(2, 'days').endOf('day'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'System',
-        attendeeResponse: 'blocked',
-        classes: ''
-      },
-      {
-        id: 10,
-        sectionID: '4',
-        name: 'Available',
-        start: moment().add(0, 'hours').startOf('hour').add(12, 'hours'),
-        end: moment().add(0, 'hours').startOf('hour').add(13, 'hours'),
-        status: AvailabilityStatus.BUSY,
-        organizer: 'System',
-        attendeeResponse: 'free',
-        classes: ''
-      }
-    ];
+    // Start with no default items; events appear after attendees are added
+    this.items = [];
 
     // Handle period changes from scheduler navigation
     this.events.PeriodChange = (start: moment.Moment) => {

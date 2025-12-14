@@ -33,6 +33,27 @@ export class Item {
   attendeeResponse?: string;
 }
 
+export interface Attendee {
+  id: string | number;
+  displayName: string;
+  email?: string;
+  type?: 'contact' | 'user' | 'room' | string;
+}
+
+export interface AttendeeGroupConfig {
+  key: string;                    // e.g., 'contacts', 'users', 'rooms'
+  title: string;                  // configurable display title
+  apiUrl?: string;                // optional: URL to fetch attendees from
+  queryParamName?: string;         // optional: query param for search (default: 'q')
+  responseDataPath?: string;       // optional: path to attendees array in response (e.g., 'data.users')
+}
+
+export interface AttendeeGroup {
+  key: string;
+  title: string;
+  attendees: Attendee[];
+}
+
 export class Section {
   id: string;
   name: string;
@@ -40,6 +61,9 @@ export class Section {
   email?: string;
   isVisible?: boolean;
   type?: 'attendee' | 'room'; // attendee or room resource
+  isSpacer?: boolean; // true for placeholder rows (group titles, comboboxes)
+  rowType?: 'group-title' | 'combobox' | 'attendee'; // row type for unified grid
+  groupKey?: string; // group key for group-title and combobox rows
 }
 
 export class Text {
@@ -77,6 +101,10 @@ export class SectionItem {
   section: Section;
   minRowHeight: number;
   itemMetas: ItemMeta[];
+  // For unified grid layout
+  rowType?: 'group-title' | 'combobox' | 'attendee';
+  groupKey?: string;
+  groupTitle?: string;
 
   constructor() {
     this.itemMetas = new Array<ItemMeta>();
