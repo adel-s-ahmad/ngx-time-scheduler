@@ -1,13 +1,20 @@
 # Angular Time Scheduler
 
-[![GitHub issues](https://img.shields.io/github/issues/abhishekjain12/ngx-time-scheduler.svg)](https://github.com/abhishekjain12/ngx-time-scheduler/issues)
-[![GitHub forks](https://img.shields.io/github/forks/abhishekjain12/ngx-time-scheduler.svg)](https://github.com/abhishekjain12/ngx-time-scheduler/network)
-[![GitHub stars](https://img.shields.io/github/stars/abhishekjain12/ngx-time-scheduler.svg)](https://github.com/abhishekjain12/ngx-time-scheduler/stargazers)
-[![GitHub license](https://img.shields.io/github/license/abhishekjain12/ngx-time-scheduler.svg)](https://github.com/abhishekjain12/ngx-time-scheduler/blob/master/LICENSE)
-[![latest](https://img.shields.io/npm/v/ngx-time-scheduler/latest.svg)](http://www.npmjs.com/package/ngx-time-scheduler)
-[![npm](https://img.shields.io/npm/dt/ngx-time-scheduler.svg)](https://www.npmjs.com/packagengx-time-scheduler)
+[![npm version](https://badge.fury.io/js/%40adelsoli%2Fngx-scheduler.svg)](https://www.npmjs.com/package/@adelsoli/ngx-scheduler)
+[![npm downloads](https://img.shields.io/npm/dm/@adelsoli/ngx-scheduler.svg)](https://www.npmjs.com/package/@adelsoli/ngx-scheduler)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A simple Angular 17+ Timeline Scheduler library
+A modern Angular time scheduler component with attendee grouping, drag-and-drop time selection, and smooth scrolling experience. Perfect for scheduling meetings, appointments, and time-based events with multiple attendees.
+
+## Features
+
+- 🎯 **Attendee Grouping**: Organize attendees into collapsible groups with title rows
+- 🖱️ **Drag-and-Drop Selection**: Intuitive time slot selection with visual feedback
+- 📋 **Inline Combobox**: Quick attendee addition with searchable dropdown
+- ⚡ **Smooth Scrolling**: Transform-based header synchronization for seamless UX
+- 🎨 **Visual Differentiation**: Distinct styling for attendee vs. non-attendee rows
+- 📱 **Responsive Design**: Optimized for various screen sizes
+- 🚀 **Performance Optimized**: GPU-accelerated scrolling with will-change transforms
 
 # Installation
 
@@ -17,7 +24,7 @@ Install via [NPM](https://npmjs.com)
 npm i @adelsoli/ngx-scheduler
 ```
 
-## Note: v0.0.3 is compatible with Angular v17.3.0+
+## Note: v1.0.0+ is compatible with Angular v17.3.0+
 
 # Getting Started
 
