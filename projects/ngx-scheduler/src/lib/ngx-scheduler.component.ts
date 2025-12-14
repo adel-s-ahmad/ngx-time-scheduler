@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, Input, Output, EventEmitter, OnDestroy, OnInit, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -67,6 +67,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() start = moment().startOf('day');
   @Input() selectedFromTime: moment.Moment | null = null;
   @Input() selectedToTime: moment.Moment | null = null;
+  @Output() attendeeSelected = new EventEmitter<{ groupKey: string; attendee: Attendee }>();
 
   // Attendee grouping and inline add controls
   @Input() attendeeGroupConfigs: AttendeeGroupConfig[] = [
@@ -163,6 +164,9 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       // Rebuild sections and refresh view
       this.rebuildSectionsFromGroups();
       this.refreshView();
+
+      // Notify container application about the selection
+      this.attendeeSelected.emit({ groupKey, attendee });
     }
 
     removeAttendeeFromGroup(groupKey: string, attendeeId: string | number): void {

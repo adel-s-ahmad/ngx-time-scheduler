@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import moment from 'moment';
-import { Events, Item, NgxTimeSchedulerModule, NgxTimeSchedulerService, Period, Section, Text } from '@adelsoli/ngx-scheduler';
+import { Events, Item, NgxTimeSchedulerModule, NgxTimeSchedulerService, Period, Section, Text, type Attendee } from '@adelsoli/ngx-scheduler';
 
 @Component({
   selector: 'app-root',
@@ -47,6 +47,8 @@ export class AppComponent {
   selectedToTime: Date | null = null;
   selectedFromTimeMoment: moment.Moment | null = null;
   selectedToTimeMoment: moment.Moment | null = null;
+  lastSelectedAttendee: Attendee | null = null;
+  lastSelectedGroupKey: string | null = null;
 
   constructor(private service: NgxTimeSchedulerService) {
   }
@@ -285,6 +287,14 @@ export class AppComponent {
         }
       }
     }
+  }
+
+  // Receives selection events from the scheduler's attendee comboboxes
+  onAttendeeSelected(evt: { groupKey: string; attendee: Attendee }) {
+    this.lastSelectedAttendee = evt.attendee;
+    this.lastSelectedGroupKey = evt.groupKey;
+    console.log('Attendee selected:', evt.attendee, 'from group:', evt.groupKey);
+    // TODO: trigger any additional side effects here (fetch availability, prefill form, etc.)
   }
 
 }
