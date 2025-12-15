@@ -21,14 +21,11 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "paths": {
-      "ngx-scheduler": [
-        "./dist/ngx-scheduler"
+      "test": [
+        "./dist/test"
       ],
       "@adelsoli/ngx-scheduler": [
         "./dist/ngx-scheduler"
-      ],
-      "test": [
-        "./dist/test"
       ]
     },
     "lib": [

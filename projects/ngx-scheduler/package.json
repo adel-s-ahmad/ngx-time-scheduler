@@ -1,6 +1,6 @@
 {
   "name": "@adelsoli/ngx-scheduler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A modern Angular time scheduler component with attendee grouping, drag-and-drop time selection, and smooth scrolling experience",
   "keywords": [
     "angular",
