@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, ElementRef, Input, Output, EventEmitter, O
 import {CdkDragDrop} from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import {
   HeaderDetails,
@@ -19,6 +20,7 @@ import {
   AvailabilityStatus
 } from './ngx-scheduler.model';
 import { AttendeeComboboxComponent } from './attendee-combobox/attendee-combobox.component';
+import { LocalizationService } from './localization.service';
 import moment_, { Moment } from 'moment';
 import {Subscription} from 'rxjs';
 import { NgxTimeSchedulerService } from './ngx-scheduler.service';
@@ -28,7 +30,9 @@ const moment = moment_;
 @Component({
   selector: 'ngx-ts[items][periods][sections]',
   templateUrl: './ngx-scheduler.component.html',
-  styleUrls: ['./ngx-scheduler.component.css']
+  styleUrls: ['./ngx-scheduler.component.css', './ngx-scheduler.component-rtl.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, TranslateModule, AttendeeComboboxComponent]
 })
 export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('sectionTd') set SectionTd(elementRef: ElementRef | undefined) {
@@ -66,6 +70,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() start = moment().startOf('day');
   @Input() selectedFromTime: moment.Moment | null = null;
   @Input() selectedToTime: moment.Moment | null = null;
+  @Input() language = 'en'; // Language input for component
   @Output() attendeeSelected = new EventEmitter<{ groupKey: string; attendee: Attendee }>();
 
   // Attendee grouping and inline add controls
@@ -77,6 +82,10 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() availableAttendees: Attendee[] = [];
   @Input() initialAttendeeGroups: AttendeeGroup[] | null = null;
   attendeeGroups: AttendeeGroup[] = [];
+  
+  // Localization properties
+  isRTL = false;
+  textDirection: 'ltr' | 'rtl' = 'ltr';
 
   end = moment().endOf('day');
   showGotoModal = false;
@@ -236,12 +245,17 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private changeDetector: ChangeDetectorRef,
-    private service: NgxTimeSchedulerService
+    private service: NgxTimeSchedulerService,
+    private localizationService: LocalizationService,
+    private translateService: TranslateService
   ) {
     moment.locale(this.locale);
   }
 
   ngOnInit(): void {
+    // Initialize localization
+    this.initializeLocalization();
+    
     this.initializeAttendeeGroups();
     this.setSectionsInSectionItems();
     this.changePeriod(this.periods[0], false);
@@ -256,6 +270,13 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // React to changes in language
+    if (changes['language'] && !changes['language'].firstChange) {
+      this.localizationService.setLanguage(this.language).subscribe(() => {
+        this.updateLocalization();
+      });
+    }
+
     // React to changes in the start input
     if (changes['start'] && !changes['start'].firstChange) {
       // Recalculate the period when start date changes
@@ -269,6 +290,31 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       this.initializeAttendeeGroups();
       this.refreshView();
     }
+  }
+
+  /**
+   * Initialize localization settings
+   */
+  private initializeLocalization(): void {
+    this.localizationService.setLanguage(this.language).subscribe(() => {
+      this.updateLocalization();
+    });
+  }
+
+  /**
+   * Update localization based on current language
+   */
+  private updateLocalization(): void {
+    this.isRTL = this.localizationService.isRTL();
+    this.textDirection = this.localizationService.getDirection();
+    
+    // Set moment locale based on language
+    if (this.language) {
+      moment.locale(this.language);
+    }
+    
+    // Trigger change detection
+    this.changeDetector.detectChanges();
   }
 
   toggleSectionVisibility(section: Section): void {
@@ -397,8 +443,19 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     const maxRightPixels = leftColumnWidth + (this.currentPeriodMinuteDiff / minutesPerSlot) * slotWidthPixels;
     const finalWidth = Math.min(widthPixels, maxRightPixels - leftPixels);
 
+    // For RTL, calculate right position instead of left
+    // In RTL, timeSlotLeftPixels becomes the right position directly
+    if (this.isRTL) {
+      return {
+        right: (leftColumnWidth + timeSlotLeftPixels) + 'px',
+        left: undefined,
+        width: finalWidth + 'px'
+      };
+    }
+
     return {
       left: leftPixels + 'px',
+      right: undefined,
       width: finalWidth + 'px'
     };
   }
@@ -417,8 +474,21 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     const durationMinutes = Math.abs(itemMeta.item.start.diff(itemMeta.item.end, 'minutes'));
     const widthPixels = (durationMinutes / minutesPerSlot) * slotWidthPixels;
 
+    // For RTL, calculate right position instead of left
+    // In RTL, the timeline flows right-to-left, so leftPixels becomes rightPixels directly
+    if (this.isRTL) {
+      return {
+        right: leftPixels + 'px',
+        left: undefined,
+        width: widthPixels + 'px',
+        height: 'calc(100% - 8px)',
+        top: '4px'
+      };
+    }
+
     return {
       left: leftPixels + 'px',
+      right: undefined,
       width: widthPixels + 'px',
       height: 'calc(100% - 8px)',
       top: '4px'

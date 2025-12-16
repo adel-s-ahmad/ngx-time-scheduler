@@ -1,15 +1,17 @@
 import {Component, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
-import { Events, Item, NgxTimeSchedulerModule, NgxTimeSchedulerService, Period, Section, Text, type Attendee } from '@adelsoli/ngx-scheduler';
+import { Events, Item, NgxTimeSchedulerComponent, NgxTimeSchedulerService, Period, Section, Text, type Attendee } from '@adelsoli/ngx-scheduler';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NgxTimeSchedulerModule, FormsModule, DatePipe],
+  imports: [NgxTimeSchedulerComponent, FormsModule, DatePipe, TranslateModule, CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css', './app-rtl.css']
 })
 export class AppComponent {
   events: Events = new Events();
@@ -17,6 +19,11 @@ export class AppComponent {
   sections: Section[] = [];
   items: Item[] = [];
   txt: Text = new Text();
+  
+  // Localization properties
+  currentLanguage = 'en';
+  supportedLanguages = ['en', 'ar'];
+  textDirection: 'ltr' | 'rtl' = 'ltr';
 
   // Inline attendee add test data
   attendeeGroupConfigs = [
@@ -50,16 +57,24 @@ export class AppComponent {
   lastSelectedAttendee: Attendee | null = null;
   lastSelectedGroupKey: string | null = null;
 
-  constructor(private service: NgxTimeSchedulerService) {
+  constructor(private service: NgxTimeSchedulerService, private translateService: TranslateService) {
   }
 
   ngOnInit() {
+    // Initialize translations
+    this.initializeLocalization();
 
     this.txt.SectionTitle = 'Attendees';
 
     // Initialize calendar to today at start of day
     this.startScheduler = moment().startOf('day');
     this.from = this.startScheduler.toDate();
+
+    // Initialize selection times to current time and one hour forward
+    this.selectedFromTimeMoment = moment();
+    this.selectedToTimeMoment = moment().add(1, 'hour');
+    this.selectedFromTime = this.selectedFromTimeMoment.toDate();
+    this.selectedToTime = this.selectedToTimeMoment.toDate();
 
     this.periods = [
       // {
@@ -290,6 +305,45 @@ export class AppComponent {
         }
       }
     }
+  }
+
+  /**
+   * Initialize localization settings
+   */
+  private initializeLocalization(): void {
+    // Set default language
+    this.translateService.setDefaultLang('en');
+    this.translateService.use(this.currentLanguage);
+    
+    // Update document direction
+    this.updateDocumentDirection();
+  }
+
+  /**
+   * Change the language of the application
+   */
+  changeLanguage(language: string): void {
+    if (this.supportedLanguages.includes(language)) {
+      this.currentLanguage = language;
+      this.translateService.use(language);
+      moment.locale(language);
+      this.updateDocumentDirection();
+    }
+  }
+
+  /**
+   * Update document direction based on current language
+   */
+  private updateDocumentDirection(): void {
+    const rtlLanguages = ['ar', 'he', 'fa', 'ur'];
+    const isRtl = rtlLanguages.includes(this.currentLanguage);
+    this.textDirection = isRtl ? 'rtl' : 'ltr';
+    
+    // Update HTML and body element
+    const htmlElement = document.documentElement;
+    htmlElement.lang = this.currentLanguage;
+    htmlElement.dir = this.textDirection;
+    document.body.dir = this.textDirection;
   }
 
   // Receives selection events from the scheduler's attendee comboboxes

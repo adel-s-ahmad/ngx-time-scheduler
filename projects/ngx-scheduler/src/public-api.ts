@@ -11,3 +11,4 @@ export type { Attendee, AttendeeGroupConfig, AttendeeGroup } from './lib/ngx-sch
 export { AttendeeComboboxComponent } from './lib/attendee-combobox/attendee-combobox.component';
 export { AttendeeService } from './lib/attendee.service';
 export type { AsyncLoadConfig } from './lib/attendee-combobox/attendee-combobox.component';
+export { LocalizationService } from './lib/localization.service';

@@ -1,0 +1,23 @@
+{
+  "app": {
+    "title": "مساعد الجدولة في Outlook",
+    "buttons": {
+      "addEvent": "+ إضافة حدث",
+      "addAttendee": "+ إضافة مشارك"
+    },
+    "labels": {
+      "from": "من:",
+      "to": "إلى:"
+    },
+    "legend": {
+      "busy": "مشغول",
+      "free": "فارغ",
+      "tentative": "مؤقت",
+      "outOfOffice": "خارج المكتب"
+    },
+    "inputs": {
+      "fromTime": "وقت البداية",
+      "toTime": "وقت النهاية"
+    }
+  }
+}

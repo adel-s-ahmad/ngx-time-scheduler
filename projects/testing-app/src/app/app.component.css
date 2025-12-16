@@ -13,10 +13,50 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .app-header h1 {
-  margin: 0 0 16px 0;
+  margin: 0;
   font-size: 28px;
   font-weight: 600;
+}
+
+.language-selector {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.language-selector label {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.language-selector select {
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 13px;
+  min-width: 140px;
+}
+
+.language-selector select option {
+  color: #333;
+  background-color: white;
+}
+
+.language-selector select:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .app-controls {

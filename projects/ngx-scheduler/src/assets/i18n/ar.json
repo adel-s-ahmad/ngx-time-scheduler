@@ -1,0 +1,31 @@
+{
+  "scheduler": {
+    "buttons": {
+      "next": "التالي",
+      "prev": "السابق",
+      "today": "اليوم",
+      "gotoDate": "انتقل إلى التاريخ"
+    },
+    "labels": {
+      "attendees": "المشاركون",
+      "headerTitle": "الجدول الزمني",
+      "groupTitle": "{{groupTitle}}",
+      "addAttendee": "إضافة مشارك",
+      "selectAttendee": "اختر مشاركاً..."
+    },
+    "placeholders": {
+      "searchAttendee": "البحث عن المشاركين..."
+    },
+    "messages": {
+      "noResults": "لم يتم العثور على نتائج",
+      "loading": "جاري التحميل..."
+    },
+    "statuses": {
+      "busy": "مشغول",
+      "free": "فارغ",
+      "tentative": "مؤقت",
+      "outOfOffice": "خارج المكتب",
+      "workingElsewhere": "العمل من مكان آخر"
+    }
+  }
+}

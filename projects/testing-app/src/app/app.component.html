@@ -1,18 +1,27 @@
-<div class="app-container">
+<div class="app-container" [attr.dir]="textDirection">
   <div class="app-header">
-    <h1>Outlook Scheduling Assistant</h1>
+    <div class="header-top">
+      <h1>{{ 'app.title' | translate }}</h1>
+      <div class="language-selector">
+        <label for="language-select">Language:</label>
+        <select id="language-select" [(ngModel)]="currentLanguage" (change)="changeLanguage(currentLanguage)">
+          <option value="en">English</option>
+          <option value="ar">العربية</option>
+        </select>
+      </div>
+    </div>
     <div class="app-controls">
       <div class="time-range-selector">
-        <label for="fromTime">From:</label>
+        <label for="fromTime">{{ 'app.labels.from' | translate }}</label>
         <input id="fromTime" type="datetime-local" [value]="selectedFromTime | date:'yyyy-MM-ddTHH:mm'" (change)="onFromTimeChange($event.target?.value)">
 
-        <label for="toTime">To:</label>
+        <label for="toTime">{{ 'app.labels.to' | translate }}</label>
         <input id="toTime" type="datetime-local" [value]="selectedToTime | date:'yyyy-MM-ddTHH:mm'" (change)="onToTimeChange($event.target?.value)">
       </div>
 
       <div class="action-buttons">
-        <button class="btn-action" (click)="addItem()">+ Add Event</button>
-        <button class="btn-action" (click)="addSection()">+ Add Attendee</button>
+        <button class="btn-action" (click)="addItem()">{{ 'app.buttons.addEvent' | translate }}</button>
+        <button class="btn-action" (click)="addSection()">{{ 'app.buttons.addAttendee' | translate }}</button>
       </div>
     </div>
   </div>
@@ -34,6 +43,7 @@
        [attendeeGroupConfigs]="attendeeGroupConfigs"
        [availableAttendees]="availableAttendees"
        [initialAttendeeGroups]="initialAttendeeGroups"
+       [language]="currentLanguage"
        (attendeeSelected)="onAttendeeSelected($event)"
     ></ngx-ts>
   </div>
@@ -42,19 +52,19 @@
     <div class="legend">
       <div class="legend-item">
         <div class="legend-color status-busy"></div>
-        <span>Busy</span>
+        <span>{{ 'app.legend.busy' | translate }}</span>
       </div>
       <div class="legend-item">
         <div class="legend-color status-free"></div>
-        <span>Free</span>
+        <span>{{ 'app.legend.free' | translate }}</span>
       </div>
       <div class="legend-item">
         <div class="legend-color status-tentative"></div>
-        <span>Tentative</span>
+        <span>{{ 'app.legend.tentative' | translate }}</span>
       </div>
       <div class="legend-item">
         <div class="legend-color status-out-of-office"></div>
-        <span>Out of Office</span>
+        <span>{{ 'app.legend.outOfOffice' | translate }}</span>
       </div>
     </div>
   </div>

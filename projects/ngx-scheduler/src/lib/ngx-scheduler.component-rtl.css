@@ -1,0 +1,91 @@
+/* RTL Support for ngx-time-scheduler */
+
+/* Apply RTL direction to main wrapper */
+.outlook-scheduler-wrapper[dir="rtl"] {
+  direction: rtl;
+}
+
+/* Header controls */
+.outlook-scheduler-wrapper[dir="rtl"] .header-controls {
+  flex-direction: row-reverse;
+}
+
+.outlook-scheduler-wrapper[dir="rtl"] .period-selector {
+  flex-direction: row-reverse;
+}
+
+.outlook-scheduler-wrapper[dir="rtl"] .navigation-controls {
+  flex-direction: row-reverse;
+}
+
+/* Sticky column positioning for RTL - move to right side */
+.outlook-scheduler-wrapper[dir="rtl"] .header-left-column {
+  left: auto !important;
+  right: 0 !important;
+  border-left: 2px solid #d0d0d0 !important;
+  border-right: none !important;
+}
+
+.outlook-scheduler-wrapper[dir="rtl"] .row-left-column {
+  left: auto !important;
+  right: 0 !important;
+  border-left: 2px solid #d0d0d0 !important;
+  border-right: none !important;
+}
+
+/* Text alignment for RTL */
+.outlook-scheduler-wrapper[dir="rtl"] .attendees-header-label {
+  text-align: right;
+}
+
+.outlook-scheduler-wrapper[dir="rtl"] .group-title-cell {
+  text-align: right;
+}
+
+.outlook-scheduler-wrapper[dir="rtl"] .attendee-cell {
+  flex-direction: row-reverse;
+}
+
+/* Combobox RTL adjustments */
+.outlook-scheduler-wrapper[dir="rtl"] .combobox-input {
+  text-align: right;
+  padding: 6px 8px 6px 24px;
+  direction: rtl;
+}
+
+.outlook-scheduler-wrapper[dir="rtl"] .combobox-dropdown-icon {
+  right: auto;
+  left: 6px;
+}
+
+/* Day separator positioning for RTL */
+.outlook-scheduler-wrapper[dir="rtl"] .day-separator {
+  transform: translateX(12px);
+}
+
+/* Day boundary header - move border to left side in RTL */
+.outlook-scheduler-wrapper[dir="rtl"] .time-slot-header.day-boundary-header {
+  border-right: none !important;
+  border-left: 12px solid #d0d0d0 !important;
+}
+
+/* Button adjustments */
+.outlook-scheduler-wrapper[dir="rtl"] .btn {
+  direction: rtl;
+}
+
+.outlook-scheduler-wrapper[dir="rtl"] .goto-modal input {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Responsive adjustments for RTL mobile */
+@media (max-width: 768px) {
+  .outlook-scheduler-wrapper[dir="rtl"] .unified-grid-header {
+    flex-direction: column-reverse;
+  }
+  
+  .outlook-scheduler-wrapper[dir="rtl"] .unified-grid-row {
+    flex-direction: column-reverse;
+  }
+}

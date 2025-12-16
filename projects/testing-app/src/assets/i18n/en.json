@@ -1,0 +1,23 @@
+{
+  "app": {
+    "title": "Outlook Scheduling Assistant",
+    "buttons": {
+      "addEvent": "+ Add Event",
+      "addAttendee": "+ Add Attendee"
+    },
+    "labels": {
+      "from": "From:",
+      "to": "To:"
+    },
+    "legend": {
+      "busy": "Busy",
+      "free": "Free",
+      "tentative": "Tentative",
+      "outOfOffice": "Out of Office"
+    },
+    "inputs": {
+      "fromTime": "From Time",
+      "toTime": "To Time"
+    }
+  }
+}

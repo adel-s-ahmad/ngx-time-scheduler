@@ -1,0 +1,31 @@
+{
+  "scheduler": {
+    "buttons": {
+      "next": "Next",
+      "prev": "Previous",
+      "today": "Today",
+      "gotoDate": "Go to Date"
+    },
+    "labels": {
+      "attendees": "Attendees",
+      "headerTitle": "Schedule",
+      "groupTitle": "{{groupTitle}}",
+      "addAttendee": "Add Attendee",
+      "selectAttendee": "Select an attendee..."
+    },
+    "placeholders": {
+      "searchAttendee": "Search attendees..."
+    },
+    "messages": {
+      "noResults": "No results found",
+      "loading": "Loading..."
+    },
+    "statuses": {
+      "busy": "Busy",
+      "free": "Free",
+      "tentative": "Tentative",
+      "outOfOffice": "Out of Office",
+      "workingElsewhere": "Working Elsewhere"
+    }
+  }
+}

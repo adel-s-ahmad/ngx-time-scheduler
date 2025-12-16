@@ -1,4 +1,4 @@
-<div class="outlook-scheduler-wrapper" [style.height]="maxHeight">
+<div class="outlook-scheduler-wrapper" [style.height]="maxHeight" [attr.dir]="textDirection">
   <!-- Header with navigation and controls -->
   <div class="outlook-scheduler-header">
     <div class="header-controls">
@@ -14,20 +14,20 @@
       </div>
 
       <div class="navigation-controls" *ngIf="showActionButtons">
-        <button class="btn btn-icon" *ngIf="showGoto" (click)="showGotoModal = !showGotoModal" title="Go to date">
+        <button class="btn btn-icon" *ngIf="showGoto" (click)="showGotoModal = !showGotoModal" [title]="'scheduler.buttons.gotoDate' | translate">
           📅
         </button>
         <div class="goto-modal" *ngIf="showGotoModal">
           <input type="date" (change)="gotoDate($event.target?.value)">
         </div>
 
-        <button class="btn btn-icon" *ngIf="showToday" (click)="gotoToday()" title="Today">
+        <button class="btn btn-icon" *ngIf="showToday" (click)="gotoToday()" [title]="'scheduler.buttons.today' | translate">
           ⭐
         </button>
-        <button class="btn btn-icon" (click)="previousPeriod()" title="Previous">
+        <button class="btn btn-icon" (click)="previousPeriod()" [title]="'scheduler.buttons.prev' | translate">
           ◀
         </button>
-        <button class="btn btn-icon" (click)="nextPeriod()" title="Next">
+        <button class="btn btn-icon" (click)="nextPeriod()" [title]="'scheduler.buttons.next' | translate">
           ▶
         </button>
       </div>
@@ -44,7 +44,7 @@
     <div class="unified-grid-header">
       <!-- Left column header -->
       <div class="header-left-column">
-        <div class="attendees-header-label">{{text.SectionTitle || 'Attendees'}}</div>
+        <div class="attendees-header-label">{{text.SectionTitle || ('scheduler.labels.attendees' | translate)}}</div>
       </div>
 
       <!-- Right column headers (time slots) - scrollable horizontally -->
@@ -167,6 +167,7 @@
                      [style.height]="getEventStyle(itemMeta, sectionItem.minRowHeight).height"
                      [style.top]="getEventStyle(itemMeta, sectionItem.minRowHeight).top"
                      [style.left]="getEventStyle(itemMeta, sectionItem.minRowHeight).left"
+                     [style.right]="getEventStyle(itemMeta, sectionItem.minRowHeight).right"
                      [style.width]="getEventStyle(itemMeta, sectionItem.minRowHeight).width">
                   <div class="event-content">
                     <div class="event-title">{{itemMeta.item.name}}</div>
@@ -201,7 +202,8 @@
                     *ngIf="showCurrentTime"
                    [title]="currentTimeTitle"
                    [style.visibility]="currentTimeVisibility"
-                   [style.left]="currentTimeIndicatorPosition">
+                   [style.left]="!isRTL ? currentTimeIndicatorPosition : null"
+                   [style.right]="isRTL ? currentTimeIndicatorPosition : null">
               </div>
             </div>
           </div>
@@ -209,6 +211,7 @@
         <div class="unified-selection-overlay-container"
              *ngIf="getSelectionStyle()"
              [style.left]="getSelectionStyle().left"
+             [style.right]="getSelectionStyle().right"
              [style.width]="getSelectionStyle().width"
              [style.top]="'0'">
         </div>

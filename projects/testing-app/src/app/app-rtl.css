@@ -1,0 +1,105 @@
+/* RTL Support for Testing App */
+
+[dir="rtl"] .app-container {
+  direction: rtl;
+}
+
+[dir="rtl"] .app-header {
+  direction: rtl;
+}
+
+[dir="rtl"] .header-top {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+[dir="rtl"] .language-selector {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 8px;
+  align-items: center;
+}
+
+[dir="rtl"] .language-selector label {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+[dir="rtl"] .app-controls {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .time-range-selector {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .time-range-selector label {
+  margin-right: 8px;
+  margin-left: 0;
+}
+
+[dir="rtl"] .time-range-selector input {
+  margin-right: 16px;
+  margin-left: 0;
+}
+
+[dir="rtl"] .action-buttons {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .btn-action {
+  direction: rtl;
+}
+
+[dir="rtl"] .app-footer {
+  direction: rtl;
+}
+
+[dir="rtl"] .legend {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .legend-item {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="rtl"] .legend-color {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .scheduler-container {
+  direction: rtl;
+}
+
+/* Adjust input fields for RTL */
+[dir="rtl"] input[type="datetime-local"],
+[dir="rtl"] input[type="date"],
+[dir="rtl"] select {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Ensure proper spacing for RTL */
+[dir="rtl"] .app-container {
+  padding: 0;
+}
+
+/* Media queries for mobile RTL */
+@media (max-width: 768px) {
+  [dir="rtl"] .app-controls {
+    flex-direction: column-reverse;
+  }
+  
+  [dir="rtl"] .time-range-selector {
+    flex-direction: column-reverse;
+  }
+  
+  [dir="rtl"] .action-buttons {
+    flex-direction: column-reverse;
+  }
+}
