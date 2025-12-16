@@ -148,6 +148,9 @@
   display: flex;
   align-items: center;
   padding: 8px 12px;
+  position: sticky;
+  left: 0;
+  z-index: 20;
 }
 
 .attendees-header-label {
@@ -223,7 +226,7 @@
   box-sizing: border-box;
   position: sticky;
   left: 0;
-  z-index: 5;
+  z-index: 20;
   overflow: visible;
 }
 
