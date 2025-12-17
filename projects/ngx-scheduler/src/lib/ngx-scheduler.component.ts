@@ -82,7 +82,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() availableAttendees: Attendee[] = [];
   @Input() initialAttendeeGroups: AttendeeGroup[] | null = null;
   attendeeGroups: AttendeeGroup[] = [];
-  
+
   // Localization properties
   isRTL = false;
   textDirection: 'ltr' | 'rtl' = 'ltr';
@@ -255,7 +255,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     // Initialize localization
     this.initializeLocalization();
-    
+
     this.initializeAttendeeGroups();
     this.setSectionsInSectionItems();
     this.changePeriod(this.periods[0], false);
@@ -275,6 +275,18 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       this.localizationService.setLanguage(this.language).subscribe(() => {
         this.updateLocalization();
       });
+    }
+
+    // React to changes in locale - rebuild headers when locale changes (including first change)
+    if (changes['locale']) {
+      // Update moment locale to ensure formatting uses correct language
+      if (this.locale) {
+        moment.locale(this.locale);
+      }
+      // Only rebuild if we already have headers (not first initialization)
+      if (!changes['locale'].firstChange && this.header && this.header.length > 0) {
+        this.rebuildHeaders();
+      }
     }
 
     // React to changes in the start input
@@ -307,12 +319,12 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   private updateLocalization(): void {
     this.isRTL = this.localizationService.isRTL();
     this.textDirection = this.localizationService.getDirection();
-    
+
     // Set moment locale based on language
     if (this.language) {
       moment.locale(this.language);
     }
-    
+
     // Trigger change detection
     this.changeDetector.detectChanges();
   }
@@ -654,6 +666,18 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       this.currentTimeVisibility = 'hidden';
     }
     this.ShowCurrentTimeHandle = window.setTimeout(() => this.showCurrentTimeIndicator(), 30000) as any;
+  }
+
+  /**
+   * Rebuild headers when locale changes to update date formatting
+   */
+  rebuildHeaders(): void {
+    if (this.currentPeriod && this.header) {
+      this.header = new Array<Header>();
+      this.currentPeriod.timeFrameHeaders.forEach((ele: string, index: number) => {
+        this.header.push(this.getDatesBetweenTwoDates(ele, index));
+      });
+    }
   }
 
   gotoToday() {

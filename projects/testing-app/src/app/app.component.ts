@@ -4,7 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
+import 'moment/locale/ar';  // Import Arabic locale for moment.js
 import { Events, Item, NgxTimeSchedulerComponent, NgxTimeSchedulerService, Period, Section, Text, type Attendee } from '@adelsoli/ngx-scheduler';
+
+// Customize Arabic locale to use English numerals but keep Arabic day/month names
+moment.updateLocale('ar', {
+  preparse: (string: string) => string,
+  postformat: (string: string) => string
+});
 
 @Component({
   selector: 'app-root',
@@ -19,9 +26,9 @@ export class AppComponent {
   sections: Section[] = [];
   items: Item[] = [];
   txt: Text = new Text();
-  
+
   // Localization properties
-  currentLanguage = 'en';
+  currentLanguage = 'ar';
   supportedLanguages = ['en', 'ar'];
   textDirection: 'ltr' | 'rtl' = 'ltr';
 
@@ -64,8 +71,6 @@ export class AppComponent {
     // Initialize translations
     this.initializeLocalization();
 
-    this.txt.SectionTitle = 'Attendees';
-
     // Initialize calendar to today at start of day
     this.startScheduler = moment().startOf('day');
     this.from = this.startScheduler.toDate();
@@ -75,6 +80,12 @@ export class AppComponent {
     this.selectedToTimeMoment = moment().add(1, 'hour');
     this.selectedFromTime = this.selectedFromTimeMoment.toDate();
     this.selectedToTime = this.selectedToTimeMoment.toDate();
+
+    // Initialize with translations after locale is set
+    setTimeout(() => {
+      this.updateSectionTitle();
+      this.updateGroupTitles();
+    }, 100);
 
     this.periods = [
       // {
@@ -312,9 +323,17 @@ export class AppComponent {
    */
   private initializeLocalization(): void {
     // Set default language
-    this.translateService.setDefaultLang('en');
+    this.translateService.setDefaultLang('ar');
     this.translateService.use(this.currentLanguage);
-    
+    // Set moment locale for initial language
+    moment.locale(this.currentLanguage);
+
+    // Listen for language changes and update translations
+    this.translateService.onLangChange.subscribe(() => {
+      this.updateSectionTitle();
+      this.updateGroupTitles();
+    });
+
     // Update document direction
     this.updateDocumentDirection();
   }
@@ -325,9 +344,15 @@ export class AppComponent {
   changeLanguage(language: string): void {
     if (this.supportedLanguages.includes(language)) {
       this.currentLanguage = language;
-      this.translateService.use(language);
+      // Set moment locale FIRST before anything else
       moment.locale(language);
+      this.translateService.use(language);
       this.updateDocumentDirection();
+      // updateGroupTitles will be called automatically via onLangChange subscription
+      // After a brief delay to ensure translations are fully loaded
+      setTimeout(() => {
+        this.updateGroupTitles();
+      }, 50);
     }
   }
 
@@ -335,15 +360,45 @@ export class AppComponent {
    * Update document direction based on current language
    */
   private updateDocumentDirection(): void {
-    const rtlLanguages = ['ar', 'he', 'fa', 'ur'];
+    const rtlLanguages = ['ar', 'fa', 'ur'];
     const isRtl = rtlLanguages.includes(this.currentLanguage);
     this.textDirection = isRtl ? 'rtl' : 'ltr';
-    
+
     // Update HTML and body element
     const htmlElement = document.documentElement;
     htmlElement.lang = this.currentLanguage;
     htmlElement.dir = this.textDirection;
     document.body.dir = this.textDirection;
+  }
+
+  /**
+   * Update section title with translation
+   */
+  private updateSectionTitle(): void {
+    this.translateService.get('scheduler.labels.attendees').subscribe(res => {
+      this.txt.SectionTitle = res;
+    });
+  }
+
+  /**
+   * Update group titles with translations
+   */
+  private updateGroupTitles(): void {
+    // Get all translations for group keys
+    const keys = this.attendeeGroupConfigs.map(config => `app.groups.${config.key}`);
+    this.translateService.get(keys).subscribe(res => {
+      // Update attendeeGroupConfigs titles
+      this.attendeeGroupConfigs = this.attendeeGroupConfigs.map(config => ({
+        ...config,
+        title: res[`app.groups.${config.key}`]
+      }));
+
+      // Update initialAttendeeGroups titles
+      this.initialAttendeeGroups = this.initialAttendeeGroups.map(group => ({
+        ...group,
+        title: res[`app.groups.${group.key}`]
+      }));
+    });
   }
 
   // Receives selection events from the scheduler's attendee comboboxes

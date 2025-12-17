@@ -3,10 +3,10 @@
     <div class="header-top">
       <h1>{{ 'app.title' | translate }}</h1>
       <div class="language-selector">
-        <label for="language-select">Language:</label>
+        <label for="language-select">{{ 'app.labels.language' | translate }}</label>
         <select id="language-select" [(ngModel)]="currentLanguage" (change)="changeLanguage(currentLanguage)">
-          <option value="en">English</option>
-          <option value="ar">العربية</option>
+          <option value="en">{{ 'app.languages.english' | translate }}</option>
+          <option value="ar">{{ 'app.languages.arabic' | translate }}</option>
         </select>
       </div>
     </div>
@@ -44,6 +44,7 @@
        [availableAttendees]="availableAttendees"
        [initialAttendeeGroups]="initialAttendeeGroups"
        [language]="currentLanguage"
+       [locale]="currentLanguage"
        (attendeeSelected)="onAttendeeSelected($event)"
     ></ngx-ts>
   </div>

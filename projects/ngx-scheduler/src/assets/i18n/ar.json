@@ -11,13 +11,17 @@
       "headerTitle": "الجدول الزمني",
       "groupTitle": "{{groupTitle}}",
       "addAttendee": "إضافة مشارك",
-      "selectAttendee": "اختر مشاركاً..."
+      "selectAttendee": "اختر مشاركاً...",
+      "language": "اللغة:"
     },
     "placeholders": {
-      "searchAttendee": "البحث عن المشاركين..."
+      "searchAttendee": "البحث عن المشاركين...",
+      "search": "بحث...",
+      "startTypingToSearch": "ابدأ الكتابة للبحث..."
     },
     "messages": {
       "noResults": "لم يتم العثور على نتائج",
+      "noItemsFound": "لم يتم العثور على عناصر",
       "loading": "جاري التحميل..."
     },
     "statuses": {
@@ -26,6 +30,10 @@
       "tentative": "مؤقت",
       "outOfOffice": "خارج المكتب",
       "workingElsewhere": "العمل من مكان آخر"
+    },
+    "languages": {
+      "english": "English",
+      "arabic": "العربية"
     }
   }
 }

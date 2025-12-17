@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import { DOCUMENT, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Attendee } from '../ngx-scheduler.model';
@@ -32,7 +33,7 @@ export interface AsyncLoadConfig {
 @Component({
   selector: 'app-attendee-combobox',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './attendee-combobox.component.html',
   styleUrls: ['./attendee-combobox.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

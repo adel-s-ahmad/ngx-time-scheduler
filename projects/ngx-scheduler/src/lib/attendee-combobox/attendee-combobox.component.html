@@ -26,7 +26,7 @@
   <!-- Loading state -->
   <div class="combobox-dropdown-portal" *ngIf="isLoading">
     <div class="spinner"></div>
-    <span>Loading...</span>
+    <span>{{ 'scheduler.messages.loading' | translate }}</span>
   </div>
 
   <!-- Results dropdown -->
@@ -49,12 +49,12 @@
   <!-- No results message -->
   <div class="combobox-dropdown-portal combobox-no-results-msg"
        *ngIf="!isLoading && filteredItems.length === 0 && filterText.trim()">
-    No items found
+    {{ 'scheduler.messages.noItemsFound' | translate }}
   </div>
 
   <!-- Empty async state -->
   <div class="combobox-dropdown-portal combobox-no-results-msg"
        *ngIf="!isLoading && filteredItems.length === 0 && !filterText.trim() && asyncConfig?.apiUrl">
-    Start typing to search...
+    {{ 'scheduler.placeholders.startTypingToSearch' | translate }}
   </div>
 </div>

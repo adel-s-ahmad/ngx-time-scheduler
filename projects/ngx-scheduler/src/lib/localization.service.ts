@@ -20,7 +20,7 @@ export class LocalizationService {
   private initializeTranslations(): void {
     // Set default language
     this.translateService.setDefaultLang('en');
-    
+
     // Add supported languages
     this.translateService.addLangs(this.supportedLanguages);
   }
@@ -31,10 +31,10 @@ export class LocalizationService {
   setLanguage(languageCode: string): Observable<any> {
     if (this.supportedLanguages.includes(languageCode)) {
       this.currentLanguage = languageCode;
-      
+
       // Update document language and direction
       this.updateDocumentLanguage(languageCode);
-      
+
       return this.translateService.use(languageCode);
     }
     return this.translateService.use(this.currentLanguage);
@@ -74,10 +74,10 @@ export class LocalizationService {
   private updateDocumentLanguage(languageCode: string): void {
     const htmlElement = document.documentElement;
     const isRtl = this.rtlLanguages.includes(languageCode);
-    
+
     htmlElement.lang = languageCode;
     htmlElement.dir = isRtl ? 'rtl' : 'ltr';
-    
+
     // Also add to body for broader CSS selectors
     document.body.dir = isRtl ? 'rtl' : 'ltr';
   }

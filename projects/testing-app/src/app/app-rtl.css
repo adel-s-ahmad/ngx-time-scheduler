@@ -94,11 +94,11 @@
   [dir="rtl"] .app-controls {
     flex-direction: column-reverse;
   }
-  
+
   [dir="rtl"] .time-range-selector {
     flex-direction: column-reverse;
   }
-  
+
   [dir="rtl"] .action-buttons {
     flex-direction: column-reverse;
   }

@@ -7,7 +7,8 @@
     },
     "labels": {
       "from": "من:",
-      "to": "إلى:"
+      "to": "إلى:",
+      "language": "اللغة:"
     },
     "legend": {
       "busy": "مشغول",
@@ -18,6 +19,52 @@
     "inputs": {
       "fromTime": "وقت البداية",
       "toTime": "وقت النهاية"
+    },
+    "languages": {
+      "english": "English",
+      "arabic": "العربية"
+    },
+    "groups": {
+      "contacts": "جهات الاتصال",
+      "users": "المستخدمون",
+      "rooms": "الغرف"
+    }
+  },
+  "scheduler": {
+    "buttons": {
+      "next": "التالي",
+      "prev": "السابق",
+      "today": "اليوم",
+      "gotoDate": "انتقل إلى التاريخ"
+    },
+    "labels": {
+      "attendees": "المشاركون",
+      "headerTitle": "الجدول الزمني",
+      "groupTitle": "{{groupTitle}}",
+      "addAttendee": "إضافة مشارك",
+      "selectAttendee": "اختر مشاركاً...",
+      "language": "اللغة:"
+    },
+    "placeholders": {
+      "searchAttendee": "البحث عن المشاركين...",
+      "search": "بحث...",
+      "startTypingToSearch": "ابدأ الكتابة للبحث..."
+    },
+    "messages": {
+      "noResults": "لم يتم العثور على نتائج",
+      "noItemsFound": "لم يتم العثور على عناصر",
+      "loading": "جاري التحميل..."
+    },
+    "statuses": {
+      "busy": "مشغول",
+      "free": "فارغ",
+      "tentative": "مؤقت",
+      "outOfOffice": "خارج المكتب",
+      "workingElsewhere": "العمل من مكان آخر"
+    },
+    "languages": {
+      "english": "English",
+      "arabic": "العربية"
     }
   }
 }

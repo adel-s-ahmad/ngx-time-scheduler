@@ -11,13 +11,17 @@
       "headerTitle": "Schedule",
       "groupTitle": "{{groupTitle}}",
       "addAttendee": "Add Attendee",
-      "selectAttendee": "Select an attendee..."
+      "selectAttendee": "Select an attendee...",
+      "language": "Language:"
     },
     "placeholders": {
-      "searchAttendee": "Search attendees..."
+      "searchAttendee": "Search attendees...",
+      "search": "Search...",
+      "startTypingToSearch": "Start typing to search..."
     },
     "messages": {
       "noResults": "No results found",
+      "noItemsFound": "No items found",
       "loading": "Loading..."
     },
     "statuses": {
@@ -26,6 +30,10 @@
       "tentative": "Tentative",
       "outOfOffice": "Out of Office",
       "workingElsewhere": "Working Elsewhere"
+    },
+    "languages": {
+      "english": "English",
+      "arabic": "العربية"
     }
   }
 }

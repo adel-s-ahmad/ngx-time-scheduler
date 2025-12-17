@@ -84,7 +84,7 @@
   .outlook-scheduler-wrapper[dir="rtl"] .unified-grid-header {
     flex-direction: column-reverse;
   }
-  
+
   .outlook-scheduler-wrapper[dir="rtl"] .unified-grid-row {
     flex-direction: column-reverse;
   }
