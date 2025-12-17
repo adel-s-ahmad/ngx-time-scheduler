@@ -12,12 +12,14 @@
       "groupTitle": "{{groupTitle}}",
       "addAttendee": "إضافة مشارك",
       "selectAttendee": "اختر مشاركاً...",
-      "language": "اللغة:"
+      "language": "اللغة:",
+
     },
     "placeholders": {
       "searchAttendee": "البحث عن المشاركين...",
       "search": "بحث...",
-      "startTypingToSearch": "ابدأ الكتابة للبحث..."
+      "startTypingToSearch": "ابدأ الكتابة للبحث...",
+      "searching": "جاري البحث..."
     },
     "messages": {
       "noResults": "لم يتم العثور على نتائج",

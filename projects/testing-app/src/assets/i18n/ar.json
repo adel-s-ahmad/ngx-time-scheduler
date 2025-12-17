@@ -43,12 +43,17 @@
       "groupTitle": "{{groupTitle}}",
       "addAttendee": "إضافة مشارك",
       "selectAttendee": "اختر مشاركاً...",
-      "language": "اللغة:"
+      "language": "اللغة:",
+      "title": "العنوان:",
+      "time": "الوقت:",
+      "status": "الحالة:",
+      "organizer": "المنظم:"
     },
     "placeholders": {
       "searchAttendee": "البحث عن المشاركين...",
       "search": "بحث...",
-      "startTypingToSearch": "ابدأ الكتابة للبحث..."
+      "startTypingToSearch": "ابدأ الكتابة للبحث...",
+      "searching": "جاري البحث..."
     },
     "messages": {
       "noResults": "لم يتم العثور على نتائج",

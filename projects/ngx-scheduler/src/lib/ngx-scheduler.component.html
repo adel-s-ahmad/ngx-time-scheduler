@@ -109,7 +109,7 @@
             <div class="combobox-cell" *ngIf="sectionItem.rowType === 'combobox'">
               <app-attendee-combobox
                 [items]="getFilteredAttendees(sectionItem.groupKey)"
-                [placeholder]=""
+                [placeholder]="comboboxPlaceholder"
                 [asyncConfig]="getAsyncConfigForGroup(sectionItem.groupKey)"
                 (itemSelected)="onAttendeeSelected(sectionItem.groupKey, $event)">
               </app-attendee-combobox>
@@ -178,19 +178,19 @@
                   <!-- Tooltip on hover -->
                   <div class="event-tooltip">
                     <div class="tooltip-row">
-                      <span class="tooltip-label">Title:</span>
+                      <span class="tooltip-label">{{titleLabel}}</span>
                       <span class="tooltip-value">{{itemMeta.item.name}}</span>
                     </div>
                     <div class="tooltip-row">
-                      <span class="tooltip-label">Time:</span>
+                      <span class="tooltip-label">{{timeLabel}}</span>
                       <span class="tooltip-value">{{itemMeta.item.start.format('MMM D, HH:mm')}} - {{itemMeta.item.end.format(itemMeta.item.start.format('YYYY-MM-DD') !== itemMeta.item.end.format('YYYY-MM-DD') ? 'MMM D, HH:mm' : 'HH:mm')}}</span>
                     </div>
                     <div class="tooltip-row">
-                      <span class="tooltip-label">Status:</span>
+                      <span class="tooltip-label">{{statusLabel}}</span>
                       <span class="tooltip-value">{{getStatusLabel(itemMeta.item.status)}}</span>
                     </div>
                     <div class="tooltip-row" *ngIf="itemMeta.item.organizer">
-                      <span class="tooltip-label">Organizer:</span>
+                      <span class="tooltip-label">{{organizerLabel}}</span>
                       <span class="tooltip-value">{{itemMeta.item.organizer}}</span>
                     </div>
                   </div>

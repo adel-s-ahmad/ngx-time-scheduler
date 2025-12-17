@@ -12,12 +12,17 @@
       "groupTitle": "{{groupTitle}}",
       "addAttendee": "Add Attendee",
       "selectAttendee": "Select an attendee...",
-      "language": "Language:"
+      "language": "Language:",
+      "title": "Title:",
+      "time": "Time:",
+      "status": "Status:",
+      "organizer": "Organizer:"
     },
     "placeholders": {
       "searchAttendee": "Search attendees...",
       "search": "Search...",
-      "startTypingToSearch": "Start typing to search..."
+      "startTypingToSearch": "Start typing to search...",
+      "searching": "Searching..."
     },
     "messages": {
       "noResults": "No results found",

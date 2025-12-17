@@ -86,6 +86,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   // Localization properties
   isRTL = false;
   textDirection: 'ltr' | 'rtl' = 'ltr';
+  comboboxPlaceholder = 'Search...';
 
   end = moment().endOf('day');
   showGotoModal = false;
@@ -320,6 +321,12 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     this.isRTL = this.localizationService.isRTL();
     this.textDirection = this.localizationService.getDirection();
 
+    // Update combobox placeholder
+    this.translateService.get('scheduler.placeholders.search').subscribe(translation => {
+      this.comboboxPlaceholder = translation;
+      this.changeDetector.detectChanges();
+    });
+
     // Set moment locale based on language
     if (this.language) {
       moment.locale(this.language);
@@ -383,16 +390,65 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     return sectionItem.rowType === 'attendee';
   }
 
+    /**
+     * Get translation with fallback to default English value
+     * Ensures library displays proper text even if consuming app doesn't provide translations
+     */
+    private getTranslationWithFallback(key: string, fallback: string): string {
+      const translation = this.translateService.instant(key);
+      // If translation not found, instant() returns the key itself
+      return translation === key ? fallback : translation;
+    }
+
     getStatusLabel(status?: string): string {
+      let key = '';
+      let fallback = '';
       switch(status) {
-        case 'busy': return 'Busy';
-        case 'free': return 'Free';
-        case 'tentative': return 'Tentative';
-        case 'out-of-office': return 'Out of Office';
-        case 'working-elsewhere': return 'Working Elsewhere';
-        case 'unknown': return 'Unknown';
-        default: return 'Busy';
+        case 'busy': 
+          key = 'scheduler.statuses.busy';
+          fallback = 'Busy';
+          break;
+        case 'free': 
+          key = 'scheduler.statuses.free';
+          fallback = 'Free';
+          break;
+        case 'tentative': 
+          key = 'scheduler.statuses.tentative';
+          fallback = 'Tentative';
+          break;
+        case 'out-of-office': 
+          key = 'scheduler.statuses.outOfOffice';
+          fallback = 'Out of Office';
+          break;
+        case 'working-elsewhere': 
+          key = 'scheduler.statuses.workingElsewhere';
+          fallback = 'Working Elsewhere';
+          break;
+        case 'unknown': 
+          key = 'scheduler.statuses.busy';
+          fallback = 'Busy';
+          break;
+        default: 
+          key = 'scheduler.statuses.busy';
+          fallback = 'Busy';
       }
+      return this.getTranslationWithFallback(key, fallback);
+    }
+
+    get titleLabel(): string {
+      return this.getTranslationWithFallback('scheduler.labels.title', 'Title:');
+    }
+
+    get timeLabel(): string {
+      return this.getTranslationWithFallback('scheduler.labels.time', 'Time:');
+    }
+
+    get statusLabel(): string {
+      return this.getTranslationWithFallback('scheduler.labels.status', 'Status:');
+    }
+
+    get organizerLabel(): string {
+      return this.getTranslationWithFallback('scheduler.labels.organizer', 'Organizer:');
     }
 
     getTotalTimeSlots(): number {
