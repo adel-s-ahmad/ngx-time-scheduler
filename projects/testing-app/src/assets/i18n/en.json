@@ -59,7 +59,8 @@
     "messages": {
       "noResults": "No results found",
       "noItemsFound": "No items found",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "itemExists": "This event already exists. Do you want to update it with the new information?"
     },
     "statuses": {
       "busy": "Busy",

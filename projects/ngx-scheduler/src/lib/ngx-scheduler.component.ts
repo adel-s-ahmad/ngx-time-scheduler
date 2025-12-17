@@ -804,8 +804,28 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
 
   itemPush() {
     this.subscription.add(this.service.itemAdd.asObservable().subscribe((item: Item) => {
-      this.items.push(item);
-      this.refreshView();
+      // Check if an item with the same id and sectionID already exists
+      const existingItemIndex = this.items.findIndex(i => i.id === item.id && i.sectionID === item.sectionID);
+      
+      if (existingItemIndex !== -1) {
+        // Item already exists, ask for confirmation to update
+        const existingItem = this.items[existingItemIndex];
+        const message = this.getTranslationWithFallback(
+          'scheduler.messages.itemExists',
+          'This event already exists. Do you want to update it with the new information?'
+        );
+        
+        if (confirm(message)) {
+          // Update the existing item
+          this.items[existingItemIndex] = item;
+          this.refreshView();
+        }
+        // If user selects "No", do nothing
+      } else {
+        // Item doesn't exist, add it normally
+        this.items.push(item);
+        this.refreshView();
+      }
     }));
   }
 
