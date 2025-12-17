@@ -118,11 +118,15 @@ export class ItemMeta {
   cssTop: number;
   cssLeft: number;
   cssWidth: number;
+  column: number;        // Which column this event occupies (0-based)
+  totalColumns: number;  // Total number of overlapping events at this time
 
   constructor() {
     this.cssTop = 0;
     this.cssLeft = 0;
     this.cssWidth = 0;
+    this.column = 0;
+    this.totalColumns = 1;
   }
 }
 

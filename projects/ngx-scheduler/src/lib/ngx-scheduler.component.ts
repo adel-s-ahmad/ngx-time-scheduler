@@ -543,6 +543,30 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     const durationMinutes = Math.abs(itemMeta.item.start.diff(itemMeta.item.end, 'minutes'));
     const widthPixels = (durationMinutes / minutesPerSlot) * slotWidthPixels;
 
+    // Adjust for overlapping events - stack vertically with offset
+    let topOffset = '4px';
+    let eventHeight = 'calc(100% - 8px)';
+    
+    if (itemMeta.totalColumns > 1) {
+      // Calculate height for each event to fit all within the row using calc()
+      const totalPadding = 8; // 4px top + 4px bottom
+      const gapBetweenEvents = 2; // 2px gap between each event
+      const totalGaps = (itemMeta.totalColumns - 1) * gapBetweenEvents;
+      
+      // Height per event: (100% - totalPadding - allGaps) / totalColumns
+      const heightCalc = `calc((100% - ${totalPadding + totalGaps}px) / ${itemMeta.totalColumns})`;
+      
+      // Top offset: initial padding + (column * (height + gap))
+      const columnOffset = itemMeta.column > 0 
+        ? `${itemMeta.column} * (${heightCalc} + ${gapBetweenEvents}px)` 
+        : '0px';
+      
+      topOffset = itemMeta.column > 0 
+        ? `calc(4px + ${columnOffset})`
+        : '4px';
+      eventHeight = heightCalc;
+    }
+
     // For RTL, calculate right position instead of left
     // In RTL, the timeline flows right-to-left, so leftPixels becomes rightPixels directly
     if (this.isRTL) {
@@ -550,8 +574,8 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
         right: leftPixels + 'px',
         left: undefined,
         width: widthPixels + 'px',
-        height: 'calc(100% - 8px)',
-        top: '4px'
+        height: eventHeight,
+        top: topOffset
       };
     }
 
@@ -559,8 +583,8 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       left: leftPixels + 'px',
       right: undefined,
       width: widthPixels + 'px',
-      height: 'calc(100% - 8px)',
-      top: '4px'
+      height: eventHeight,
+      top: topOffset
     };
   }
 
@@ -610,6 +634,9 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
       });
+      
+      // Calculate overlapping events and assign columns for this section
+      this.calculateOverlappingColumns(ele.itemMetas);
     });
 
     const sortedItems = itemMetas.reduce((sortItems: { [key: number]: ItemMeta[] }, itemMeta: ItemMeta) => {
@@ -622,6 +649,86 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     }, {});
 
     this.calCssTop(sortedItems);
+  }
+
+  /**
+   * Calculate overlapping events and assign columns for horizontal stacking
+   */
+  private calculateOverlappingColumns(itemMetas: ItemMeta[]): void {
+    if (itemMetas.length === 0) return;
+
+    // Reset all column assignments first
+    itemMetas.forEach(meta => {
+      meta.column = 0;
+      meta.totalColumns = 1;
+    });
+
+    // Sort by start time, then by duration (longer events first)
+    const sorted = [...itemMetas].sort((a, b) => {
+      const startDiff = a.item.start.valueOf() - b.item.start.valueOf();
+      if (startDiff !== 0) return startDiff;
+      return b.item.end.valueOf() - a.item.end.valueOf();
+    });
+
+    // Track which columns are occupied at each time point
+    const columns: ItemMeta[][] = [];
+
+    sorted.forEach(itemMeta => {
+      // Find the first column where this event doesn't overlap with existing events
+      let columnIndex = 0;
+      let placed = false;
+
+      while (!placed) {
+        if (!columns[columnIndex]) {
+          columns[columnIndex] = [];
+        }
+
+        // Check if this event overlaps with any event in this column
+        const overlaps = columns[columnIndex].some(existingEvent => 
+          this.eventsOverlap(itemMeta.item, existingEvent.item)
+        );
+
+        if (!overlaps) {
+          // Place event in this column
+          columns[columnIndex].push(itemMeta);
+          itemMeta.column = columnIndex;
+          placed = true;
+        } else {
+          columnIndex++;
+        }
+      }
+    });
+
+    // Now assign totalColumns to each event based on its specific overlapping group
+    // We need to find connected components of overlapping events
+    sorted.forEach(itemMeta => {
+      // Find all events that directly overlap with this one
+      const directOverlaps = sorted.filter(other => 
+        other !== itemMeta && this.eventsOverlap(itemMeta.item, other.item)
+      );
+      
+      if (directOverlaps.length === 0) {
+        // No overlaps, reset to single column
+        itemMeta.column = 0;
+        itemMeta.totalColumns = 1;
+      } else {
+        // Find the maximum column among this event and its direct overlaps
+        const maxColumn = Math.max(itemMeta.column, ...directOverlaps.map(e => e.column));
+        itemMeta.totalColumns = maxColumn + 1;
+        
+        // Also update all direct overlaps to have the same totalColumns
+        directOverlaps.forEach(overlap => {
+          overlap.totalColumns = Math.max(overlap.totalColumns, maxColumn + 1);
+        });
+      }
+    });
+  }
+
+  /**
+   * Check if two events overlap in time
+   */
+  private eventsOverlap(event1: Item, event2: Item): boolean {
+    return event1.start.isBefore(event2.end) && event1.end.isAfter(event2.start);
   }
 
   itemMetaCal(itemMeta: ItemMeta) {

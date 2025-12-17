@@ -869,7 +869,7 @@
   border: none;
   border-radius: 0;
   box-shadow: inset 2px 0 0 rgba(0, 120, 215, 0.7), inset -2px 0 0 rgba(0, 120, 215, 0.7);
-  z-index: 6;
+  z-index: 10;
   pointer-events: none;
   box-sizing: border-box;
 }

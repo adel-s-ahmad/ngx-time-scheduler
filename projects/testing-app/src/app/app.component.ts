@@ -212,9 +212,16 @@ export class AppComponent {
 
   }
 
+getRandomInt(min: number, max: number): number {
+  min = Math.ceil(min); // Rounds up the min value to the nearest integer
+  max = Math.floor(max); // Rounds down the max value to the nearest integer
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
   addItem() {
     this.service.itemPush({
-      id: 11,
+      id: this.getRandomInt(1, 100),
       sectionID: 'r1',
       name: 'New Meeting',
       start: moment().startOf('day').add(16, 'hours'),
