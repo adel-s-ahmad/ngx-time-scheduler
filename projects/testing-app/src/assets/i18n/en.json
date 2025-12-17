@@ -8,7 +8,8 @@
     "labels": {
       "from": "From:",
       "to": "To:",
-      "language": "Language:"
+      "language": "Language:",
+      "showEventTitles": "Show Event Titles (Privacy)"
     },
     "legend": {
       "busy": "Busy",

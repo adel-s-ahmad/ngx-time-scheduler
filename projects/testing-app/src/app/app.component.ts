@@ -31,6 +31,7 @@ export class AppComponent {
   currentLanguage = 'ar';
   supportedLanguages = ['en', 'ar'];
   textDirection: 'ltr' | 'rtl' = 'ltr';
+  showEventTitles = true; // Privacy/security toggle
 
   // Inline attendee add test data
   attendeeGroupConfigs = [

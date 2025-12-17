@@ -8,7 +8,8 @@
     "labels": {
       "from": "من:",
       "to": "إلى:",
-      "language": "اللغة:"
+      "language": "اللغة:",
+      "showEventTitles": "إظهار عناوين الأحداث (الخصوصية)"
     },
     "legend": {
       "busy": "مشغول",

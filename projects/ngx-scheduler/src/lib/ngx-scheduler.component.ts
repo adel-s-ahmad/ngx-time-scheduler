@@ -55,6 +55,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showActionButtons = true;
   @Input() showGoto = true;
   @Input() showToday = true;
+  @Input() showEventTitles = true; // Control visibility of event names for privacy/security
   @Input() allowDragging = false;
   // @Input() allowResizing = false;
   @Input() locale = '';

@@ -19,6 +19,13 @@
         <input id="toTime" type="datetime-local" [value]="selectedToTime | date:'yyyy-MM-ddTHH:mm'" (change)="onToTimeChange($event.target?.value)">
       </div>
 
+      <div class="privacy-toggle">
+        <label>
+          <input type="checkbox" [(ngModel)]="showEventTitles">
+          {{ 'app.labels.showEventTitles' | translate }}
+        </label>
+      </div>
+
       <div class="action-buttons">
         <button class="btn-action" (click)="addItem()">{{ 'app.buttons.addEvent' | translate }}</button>
         <button class="btn-action" (click)="addSection()">{{ 'app.buttons.addAttendee' | translate }}</button>
@@ -45,6 +52,7 @@
        [initialAttendeeGroups]="initialAttendeeGroups"
        [language]="currentLanguage"
        [locale]="currentLanguage"
+       [showEventTitles]="showEventTitles"
        (attendeeSelected)="onAttendeeSelected($event)"
     ></ngx-ts>
   </div>
