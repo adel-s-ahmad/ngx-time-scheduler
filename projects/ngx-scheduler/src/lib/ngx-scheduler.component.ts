@@ -17,6 +17,7 @@ import {
   Attendee,
   AttendeeGroup,
   AttendeeGroupConfig,
+  AttendeeRemovalEvent,
   AvailabilityStatus
 } from './ngx-scheduler.model';
 import { AttendeeComboboxComponent } from './attendee-combobox/attendee-combobox.component';
@@ -72,7 +73,9 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedFromTime: moment.Moment | null = null;
   @Input() selectedToTime: moment.Moment | null = null;
   @Input() language = 'en'; // Language input for component
+  @Input() allowRemovingAttendees = true; // Control whether attendees can be removed
   @Output() attendeeSelected = new EventEmitter<{ groupKey: string; attendee: Attendee }>();
+  @Output() attendeeRemoved = new EventEmitter<AttendeeRemovalEvent>();
 
   // Attendee grouping and inline add controls
   @Input() attendeeGroupConfigs: AttendeeGroupConfig[] = [
@@ -182,11 +185,20 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     removeAttendeeFromGroup(groupKey: string, attendeeId: string | number): void {
       const group = this.attendeeGroups.find(g => g.key === groupKey);
       if (!group) return;
+
+      // Find the attendee before removing
+      const attendee = group.attendees.find(a => a.id === attendeeId);
+      if (!attendee) return;
+
+      // Remove the attendee from the group
       group.attendees = group.attendees.filter(a => a.id !== attendeeId);
 
       // Rebuild sections and refresh view
       this.rebuildSectionsFromGroups();
       this.refreshView();
+
+      // Notify container application about the removal
+      this.attendeeRemoved.emit({ groupKey, attendee });
     }
 
     private generateSampleEventsForAttendee(attendee: Attendee): void {
@@ -405,31 +417,31 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       let key = '';
       let fallback = '';
       switch(status) {
-        case 'busy': 
+        case 'busy':
           key = 'scheduler.statuses.busy';
           fallback = 'Busy';
           break;
-        case 'free': 
+        case 'free':
           key = 'scheduler.statuses.free';
           fallback = 'Free';
           break;
-        case 'tentative': 
+        case 'tentative':
           key = 'scheduler.statuses.tentative';
           fallback = 'Tentative';
           break;
-        case 'out-of-office': 
+        case 'out-of-office':
           key = 'scheduler.statuses.outOfOffice';
           fallback = 'Out of Office';
           break;
-        case 'working-elsewhere': 
+        case 'working-elsewhere':
           key = 'scheduler.statuses.workingElsewhere';
           fallback = 'Working Elsewhere';
           break;
-        case 'unknown': 
+        case 'unknown':
           key = 'scheduler.statuses.busy';
           fallback = 'Busy';
           break;
-        default: 
+        default:
           key = 'scheduler.statuses.busy';
           fallback = 'Busy';
       }
@@ -546,22 +558,22 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     // Adjust for overlapping events - stack vertically with offset
     let topOffset = '4px';
     let eventHeight = 'calc(100% - 8px)';
-    
+
     if (itemMeta.totalColumns > 1) {
       // Calculate height for each event to fit all within the row using calc()
       const totalPadding = 8; // 4px top + 4px bottom
       const gapBetweenEvents = 2; // 2px gap between each event
       const totalGaps = (itemMeta.totalColumns - 1) * gapBetweenEvents;
-      
+
       // Height per event: (100% - totalPadding - allGaps) / totalColumns
       const heightCalc = `calc((100% - ${totalPadding + totalGaps}px) / ${itemMeta.totalColumns})`;
-      
+
       // Top offset: initial padding + (column * (height + gap))
-      const columnOffset = itemMeta.column > 0 
-        ? `${itemMeta.column} * (${heightCalc} + ${gapBetweenEvents}px)` 
+      const columnOffset = itemMeta.column > 0
+        ? `${itemMeta.column} * (${heightCalc} + ${gapBetweenEvents}px)`
         : '0px';
-      
-      topOffset = itemMeta.column > 0 
+
+      topOffset = itemMeta.column > 0
         ? `calc(4px + ${columnOffset})`
         : '4px';
       eventHeight = heightCalc;
@@ -634,7 +646,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
       });
-      
+
       // Calculate overlapping events and assign columns for this section
       this.calculateOverlappingColumns(ele.itemMetas);
     });
@@ -684,7 +696,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         // Check if this event overlaps with any event in this column
-        const overlaps = columns[columnIndex].some(existingEvent => 
+        const overlaps = columns[columnIndex].some(existingEvent =>
           this.eventsOverlap(itemMeta.item, existingEvent.item)
         );
 
@@ -703,10 +715,10 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     // We need to find connected components of overlapping events
     sorted.forEach(itemMeta => {
       // Find all events that directly overlap with this one
-      const directOverlaps = sorted.filter(other => 
+      const directOverlaps = sorted.filter(other =>
         other !== itemMeta && this.eventsOverlap(itemMeta.item, other.item)
       );
-      
+
       if (directOverlaps.length === 0) {
         // No overlaps, reset to single column
         itemMeta.column = 0;
@@ -715,7 +727,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
         // Find the maximum column among this event and its direct overlaps
         const maxColumn = Math.max(itemMeta.column, ...directOverlaps.map(e => e.column));
         itemMeta.totalColumns = maxColumn + 1;
-        
+
         // Also update all direct overlaps to have the same totalColumns
         directOverlaps.forEach(overlap => {
           overlap.totalColumns = Math.max(overlap.totalColumns, maxColumn + 1);
@@ -913,7 +925,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
     this.subscription.add(this.service.itemAdd.asObservable().subscribe((item: Item) => {
       // Check if an item with the same id and sectionID already exists
       const existingItemIndex = this.items.findIndex(i => i.id === item.id && i.sectionID === item.sectionID);
-      
+
       if (existingItemIndex !== -1) {
         // Item already exists, ask for confirmation to update
         const existingItem = this.items[existingItemIndex];
@@ -921,7 +933,7 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
           'scheduler.messages.itemExists',
           'This event already exists. Do you want to update it with the new information?'
         );
-        
+
         if (confirm(message)) {
           // Update the existing item
           this.items[existingItemIndex] = item;

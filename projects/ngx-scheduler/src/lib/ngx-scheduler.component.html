@@ -119,7 +119,7 @@
             <div class="attendee-cell" *ngIf="sectionItem.rowType === 'attendee'">
               <div class="attendee-checkbox">
                 <button type="button"
-                        *ngIf="sectionItem.groupKey"
+                        *ngIf="sectionItem.groupKey && allowRemovingAttendees"
                         class="remove-attendee-btn-icon"
                         (click)="removeAttendeeFromGroup(sectionItem.groupKey, sectionItem.section.id)"
                         title="Remove">×</button>

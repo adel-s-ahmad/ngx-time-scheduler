@@ -88,12 +88,18 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
 
     // Bind scroll/resize listeners to reposition dropdown when open
     this.bindRepositionListeners();
+
+    // Add global click listener to close dropdown when clicking outside
+    this.renderer.listen('document', 'click', (event: MouseEvent) => {
+      this.onDocumentClick(event);
+    });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
     this.unbindRepositionListeners();
+    this.removeDropdownFromBody();
   }
 
   ngAfterViewChecked(): void {
@@ -182,11 +188,11 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
 
   onInputBlur(): void {
     // Delay to allow click on item to be processed
-    setTimeout(() => {
+    Promise.resolve().then(() => {
       this.isOpen = false;
       this.hideDropdown();
       this.cdr.markForCheck();
-    }, 200);
+    });
   }
 
   onKeyDown(event: KeyboardEvent): void {
@@ -237,9 +243,9 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
       this.isOpen = false;
       this.hideDropdown();
       this.cdr.markForCheck();
-      setTimeout(() => {
+      Promise.resolve().then(() => {
         this.inputElement?.nativeElement.blur();
-      }, 0);
+      });
     } else {
       // Keep open and refetch for rapid multi-select
       if (this.asyncConfig?.apiUrl) {
@@ -247,9 +253,9 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
       }
       this.needsPositioning = true;
       this.cdr.markForCheck();
-      setTimeout(() => {
+      Promise.resolve().then(() => {
         this.inputElement?.nativeElement.focus();
-      }, 0);
+      });
     }
   }
 
@@ -305,6 +311,26 @@ export class AttendeeComboboxComponent implements OnInit, OnDestroy, AfterViewCh
 
   private hideDropdown(): void {
     // Dropdown visibility is handled by *ngIf which will remove it from body
+    this.removeDropdownFromBody();
+  }
+
+  private removeDropdownFromBody(): void {
+    if (this.dropdownElement?.nativeElement?.parentElement === this.document.body) {
+      this.renderer.removeChild(this.document.body, this.dropdownElement.nativeElement);
+    }
+  }
+
+  private onDocumentClick(event: MouseEvent): void {
+    // Check if click is outside the combobox component
+    const target = event.target as HTMLElement;
+    const isClickInside = this.host?.nativeElement.contains(target);
+
+    if (!isClickInside && this.isOpen) {
+      // Click is outside, close the dropdown
+      this.isOpen = false;
+      this.removeDropdownFromBody();
+      this.cdr.markForCheck();
+    }
   }
 
   private bindRepositionListeners(): void {

@@ -26,6 +26,13 @@
         </label>
       </div>
 
+      <div class="privacy-toggle">
+        <label>
+          <input type="checkbox" [(ngModel)]="allowRemovingAttendees">
+          {{ 'app.labels.allowRemovingAttendees' | translate }}
+        </label>
+      </div>
+
       <div class="action-buttons">
         <button class="btn-action" (click)="addItem()">{{ 'app.buttons.addEvent' | translate }}</button>
         <button class="btn-action" (click)="addSection()">{{ 'app.buttons.addAttendee' | translate }}</button>
@@ -53,7 +60,9 @@
        [language]="currentLanguage"
        [locale]="currentLanguage"
        [showEventTitles]="showEventTitles"
+       [allowRemovingAttendees]="allowRemovingAttendees"
        (attendeeSelected)="onAttendeeSelected($event)"
+       (attendeeRemoved)="onAttendeeRemoved($event)"
     ></ngx-ts>
   </div>
 

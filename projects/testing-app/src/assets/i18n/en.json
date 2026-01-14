@@ -9,7 +9,8 @@
       "from": "From:",
       "to": "To:",
       "language": "Language:",
-      "showEventTitles": "Show Event Titles (Privacy)"
+      "showEventTitles": "Show Event Titles (Privacy)",
+      "allowRemovingAttendees": "Allow Removing Attendees"
     },
     "legend": {
       "busy": "Busy",

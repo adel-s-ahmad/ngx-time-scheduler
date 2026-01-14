@@ -9,7 +9,8 @@
       "from": "من:",
       "to": "إلى:",
       "language": "اللغة:",
-      "showEventTitles": "إظهار عناوين الأحداث (الخصوصية)"
+      "showEventTitles": "إظهار عناوين الأحداث (الخصوصية)",
+      "allowRemovingAttendees": "السماح بإزالة الحضور"
     },
     "legend": {
       "busy": "مشغول",

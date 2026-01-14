@@ -48,6 +48,11 @@ export interface AttendeeGroupConfig {
   responseDataPath?: string;       // optional: path to attendees array in response (e.g., 'data.users')
 }
 
+export interface AttendeeRemovalEvent {
+  groupKey: string;               // The group from which the attendee was removed
+  attendee: Attendee;             // The removed attendee
+}
+
 export interface AttendeeGroup {
   key: string;
   title: string;

@@ -32,6 +32,7 @@ export class AppComponent {
   supportedLanguages = ['en', 'ar'];
   textDirection: 'ltr' | 'rtl' = 'ltr';
   showEventTitles = true; // Privacy/security toggle
+  allowRemovingAttendees = true; // Control whether attendees can be removed
 
   // Inline attendee add test data
   attendeeGroupConfigs = [
@@ -415,6 +416,12 @@ getRandomInt(min: number, max: number): number {
     this.lastSelectedGroupKey = evt.groupKey;
     console.log('Attendee selected:', evt.attendee, 'from group:', evt.groupKey);
     // TODO: trigger any additional side effects here (fetch availability, prefill form, etc.)
+  }
+
+  // Receives removal events from the scheduler
+  onAttendeeRemoved(evt: { groupKey: string; attendee: Attendee }) {
+    console.log('Attendee removed:', evt.attendee, 'from group:', evt.groupKey);
+    // TODO: trigger any additional side effects here (cleanup, API calls, etc.)
   }
 
 }
