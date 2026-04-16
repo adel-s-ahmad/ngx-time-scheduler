@@ -345,6 +345,9 @@ export class NgxTimeSchedulerComponent implements OnInit, OnChanges, OnDestroy {
       moment.locale(this.language);
     }
 
+    // Rebuild sectionItems/itemMetas so format() picks up new locale
+    this.refreshView();
+
     // Trigger change detection
     this.changeDetector.detectChanges();
   }
